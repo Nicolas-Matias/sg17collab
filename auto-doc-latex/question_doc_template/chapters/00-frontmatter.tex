@@ -1,0 +1,39 @@
+% 00-frontmatter.tex — Title page, header tables, abstract
+
+\input{chapters/results/00}
+
+% --- ITU Header Table ---
+\begin{longtable}{m{0.15\linewidth} p{0.45\linewidth} >{\raggedleft\arraybackslash}p{0.35\linewidth}}
+\centering \multirow{3}{*}{%
+  \includegraphics[width=0.70417in,height=0.77361in]{images/image1.png}%
+} &
+\multirow{3}{=}{%
+  {\tiny INTERNATIONAL TELECOMMUNICATION UNION}\newline
+  \textbf{TELECOMMUNICATION\newline STANDARDIZATION SECTOR}\newline
+  {\footnotesize STUDY PERIOD 2025-2028}%
+} &
+SG\studyGroup-TD\reportNumber/WP\workingParty \\
+& & \textbf{\textsc{STUDY GROUP \studyGroup}} \\
+& & \textbf{Original: English}
+\end{longtable}
+
+% Question Source Title
+\begin{longtable}{p{0.15\linewidth} p{0.40\linewidth} >{\raggedleft\arraybackslash}p{0.40\linewidth}}
+\midrule
+\textbf{Question(s):} & {\questions}/{\studyGroup} & \place, \occurence \\
+\multicolumn{3}{@{}c@{}}{\textbf{TD}} \\
+\textbf{Source:} & \multicolumn{2}{l}{Rapporteur Q{\questions}/{\studyGroup}} \\
+\textbf{Title:} & \multicolumn{2}{l}{Report of Question {\questions/\studyGroup} meeting} \\
+\end{longtable}
+
+% Contacts
+
+\contact
+
+\vspace{1em}
+
+% --- Abstract  ---
+\begin{longtable}{p{0.15\linewidth} p{0.80\linewidth}}
+\textbf{Abstract:} &
+\abstr
+\end{longtable}

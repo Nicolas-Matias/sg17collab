@@ -1,0 +1,385 @@
+= Document
+:docNumber: 2
+:docType: Temporary Document
+:language: en
+:mn-output-extensions: doc,pdf
+== Abstract
+
+This TD contains the report for Working Party 1/17 meeting.
+
+== Introduction:
+
+Working Party 1/17met during the SG17 meeting held in Geneva, 2025/04/08, chaired by Debora COMPARIN (Ministère de l'Économie, des Finances et de la Souveraineté Industrielle et Numérique, France) and assisted by Afnan ALROMI (Communications, Space and Technology Commission (CST), Saudi Arabia), Honey MAKOLA (Independent Communications Authority of South Africa (ICASA), South Africa)
+
+The meeting was addressed in _number_ sessions on _days_. The group adopted the agenda in link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0001[TD1].
+
+== Executive summary | Highlights
+
+_Include here an executive summary of the executive summaries of Questions of this WP meeting._
+
+During this SG17 meeting, WP1/17 achieved the following results:
+
+-    1 Recommendations were finalized znd proposed for TAP approval: 18
+
+-    1 Recommendations were finalized znd proposed for TAP determination: 42
+
+-    1 Recommendations were finalized znd proposed for AAP consent: 41
+
+-    6 new work items were agreed to be started: 19, 51, 29, 41, 61, 48
+
+-    25 work items were progressed: X.1250rev, X.srdidm, X.tas, X.bvm, X.accsadlt, X.oob-pacs, X.supp.divs (ex TR.divs), X.1254rev, X.tis, XSTR.SIMRegBio (ex TR.SIMRegBio), X.vctp, X.1281Amd1, X.sfdiw, X.1280rev, X.aas, X.dpki, X.510 Amd.1, X.509Amd.2, XSTR.ac-pqc (ex TR.ac-pqc), X.sec_QKDNi, X.sec_QKD_profr, XSTR.hyb_qsafe (ex TR.hyb_qsafe), XSTR.kdc_qkdn (ex TR.kdc_qkdn), XSTR.QKDN-SP (ex TR.QKDN-SP), XSTR.SQKDN-SC (ex TR.SQKDN-SC)
+
+-    15 work items are planed for action in next SG17 meeting: X.supp.divs, X.1254rev, X.accsadlt, X.bvm, X.srdidm, X.tas, X.tis, X.oob-pacs, X.vctp, X.509Amd.2, X.510Amd.1, TR.kdc_qkdn, TR.QKDN-SP, X.sec_QKD_profr, X.sec_QKDNi
+
+-    8 outgoing liaison statements were agreed to be sent: to ISO/IEC SC 27/WG 5 and ITU OWF, to ISO/IEC JTC 1/SC 27/WG 5, to OpenID Foundation, to Secure Identity Alliance (SIA), to ETSI, to IETF SIDROPS WG, to IETF PKIX, LAMPS, CA/Browser Forum, to ITU-T JCA-QKDN, ITU-T SG2, ITU-T SG11, ITU-T SG13, ETSI ISG-QKD, ISO/IEC JTC1/SC27 WG2, ISO/IEC JTC1/SC27 WG3
+
+-    1 interim (RGM) meeting was planned before the next SG17 meeting: Agenda of ISO/IEC JTC 1/SC 6/WG 10 and ITU-T Q11/17 collaborative meeting
+
+-    _Appointment of associate rapporteur / liaison officers, if any_
+
+-    _Any other issue of importance (e.g. OID assignment, roadmap updates, workshop, joint session, A.5 qualification_
+
+== WP1/17 Structure and leadership
+
+WP1/17 Management team
+
+-   Chair: Debora COMPARIN (Ministère de l'Économie, des Finances et de la Souveraineté Industrielle et Numérique, France)
+
+-   Vice-chair: Afnan ALROMI (Communications, Space and Technology Commission (CST), Saudi Arabia)
+
+-   Vice-chair: Honey MAKOLA (Independent Communications Authority of South Africa (ICASA), South Africa)
+
+The following table reproduce the current list of WP1/17 Questions and related Rapporteurs
+
+[cols="4,12,4,4"]
+.Questions and related Rapporteurs
+|===
+|Question|Title|Rapporteur|Associate Rapporteurs
+
+|Q10/17|Identity management and telebiometrics architecture and mechanisms|Abbie BARBIR (Aetna, United States)|Jason KIM (, Korea (Rep. of))
+|||Hiroshi TAKECHI (NEC Corporation, Japan)|Keundug PARK (Ministry of Science and ICT, Korea (Rep. of))
+||||Junjie XIA (China Unicom, China)
+|Q11/17|Generic technologies to support secure applications|Jean-Paul LEMAIRE (International Organization for Standardization, France)|
+|Q15/17|Quantum-based security|Kaoru KENYOSHI (National Institute of Information and Communications Technology (NICT), Japan)|Hyung-Soo (Hans) KIM (Ministry of Science and ICT, Korea (Rep. of))
+
+|===
+
+== Documentation and email lists
+
+=== Documentation
+
+The following documents were discussed by WP1/17Questions:
+
+Q10/17:
+
+- C: link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0002[C2], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0005[C5R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0006[C6R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0013[C13], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0027[C27], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0029[C29], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0035[C35], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0037[C37], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0044[C44], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0072[C72], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0080[C80], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0091[C91], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0094[C94], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0098[C98], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0099[C99], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0123[C123], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0142[C142]
+- TD: link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0005[TD5], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0018[TD18], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0029[TD29], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0034[TD34], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0043[TD43], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0045[TD45], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0060[TD60], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0070[TD70], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0082[TD82], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0088[TD88], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0103[TD103], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0104[TD104]link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-PLEN-0027[TD27], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-PLEN-0047[TD47R2], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-PLEN-0048[TD48R2], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-PLEN-0061[TD61], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-PLEN-0062[TD62R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-PLEN-0072[TD72], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-PLEN-0081[TD81R2], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-PLEN-0087[TD87]link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0001[TD1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0002[TD2R6], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0003[TD3R6], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0006[TD6R7], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0009[TD9], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0012[TD12], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0013[TD13], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0014[TD14], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0015[TD15], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0018[TD18R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0019[TD19], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0020[TD20], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0021[TD21], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0022[TD22R2], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0023[TD23], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0024[TD24], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0025[TD25], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0026[TD26], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0027[TD27], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0028[TD28], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0029[TD29R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0030[TD30], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0038[TD38], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0039[TD39], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0041[TD41R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0042[TD42], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0043[TD43], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0045[TD45], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0050[TD50R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0051[TD51R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0052[TD52R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0054[TD54R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0055[TD55], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0056[TD56], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0058[TD58], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0059[TD59], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0060[TD60], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0063[TD63R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0064[TD64], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0065[TD65R2], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0066[TD66], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0067[TD67]
+
+Q11/17:
+
+- C: link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0041[C41], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0063[C63], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0066[C66], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0111[C111], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0122[C122], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0126[C126], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0146[C146]
+- TD: link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0003[TD3], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0004[TD4], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0007[TD7], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0029[TD29], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0040[TD40], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0043[TD43], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0046[TD46], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0088[TD88]link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-PLEN-0027[TD27], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-PLEN-0049[TD49]link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0001[TD1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0002[TD2R6], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0004[TD4R4], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0007[TD7R3], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0010[TD10], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0024[TD24], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0025[TD25], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0026[TD26], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0027[TD27], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0028[TD28], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0031[TD31], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0032[TD32R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0033[TD33], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0034[TD34], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0035[TD35], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0036[TD36R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0040[TD40R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0044[TD44R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0053[TD53], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0057[TD57], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0061[TD61], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0062[TD62]
+
+Q15/17:
+
+- C: link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0011[C11], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0012[C12], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0016[C16], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0038[C38], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0117[C117], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0133[C133], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0158[C158], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0168[C168], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0177[C177], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0179[C179], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-C-0190[C190]
+- TD: link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0006[TD6], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0064[TD64], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0067[TD67], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0076[TD76], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-GEN-0077[TD77]link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0001[TD1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0002[TD2R6], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0005[TD5R2], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0008[TD8R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0011[TD11], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0016[TD16], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0017[TD17], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0024[TD24], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0025[TD25], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0026[TD26], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0027[TD27], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0028[TD28], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0035[TD35], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0036[TD36R1], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0037[TD37], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0046[TD46], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0047[TD47], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0048[TD48], link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0049[TD49]
+
+The complete documentation for this SG17 meeting is to be found at:
+
+link:link:https://www.itu.int/md/T25-SG17-20250408/sum/en[link:https://www.itu.int/md/T25-SG17-20250408/sum/en]
+
+=== Emailing list subscription
+
+E-mail correspondences pertaining to the activities of this working party and Questions under this working party are routinely conducted using the e-mail reflectors. For more information on available e-mail reflectors and informal FTP areas, please visit the dedicated https://www.itu.int/en/ITU-T/studygroups/2025-2028/17/Pages/ifa-structure.aspx[webpage].
+
+Those wishing to subscribe or unsubscribe to SG17 email reflectors, please visit https://www.itu.int/net4/iwm?p0=0&p11=ITU&p12=ITU-SEP-ITU-T-SEP-SP%2017-SEP-Study%20Group%2017&p21=ITU&p22=ITU[subcription webpage].
+
+== WP1/17 opening plenary results
+
+=== Reports of interim Rapporteur meetings
+
+The following interim meetings of the rapporteur groups under this working party were reviewed and approved: 
+
+[cols="4,12,12,4"]
+.meeting reports
+|===
+|Question|Meeting|Date, Place|Report
+
+|Q10/17|Q10/17 Rapporteur meeting|Paris,  6 December 2024|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0009[TD9/1]
+
+|Q11/17|Q11/17 Rapporteur meeting|Stockholm,  7-11 October 2024|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0010[TD10/1]
+
+
+|===
+
+_Include here summary of interim meeting results, esp. updates to candidate texts planned by last meeting for decision in this meeting._
+
+=== Other issues discussed at the opening plenary
+
+_Include here a report on additional issues discussed during the opening plenary of this WP, for example,_
+
+- _joint session,_
+
+- _workshop organized in the past period or during this meeting,_
+
+- _tutorial,_
+
+- _appointment of ACTING Rapporteur for this meeting only,_
+
+- _review of incoming liaison statements,_
+
+- _reports from liaison officers, etc._
+
+=== Appointment of Rapporteurs, Associate Rapporteurs and Liaison Officers and other issues for SG17closing plenary decisions
+
+_Include here any change in the list of Rapporteurs, Associate Rapporteurs and Liaison officers. For instance:_
+
+- _Mr name is no longer the Rapporteur of Qxx/17. Ms name has been appointed as Rapporteur of Qxx/17_
+
+- _Mr name will act as new liaison officer for organization XXX_
+
+- _Ms name has been appointed as Associate Rapporteur for Qyy/17_
+
+_Identify any other important issues for SG17 closing plenary decision, except Question deliberations recorded in the section 5 below._
+
+== Questions meetings during SG17 meeting
+
+The reports of each Question under WP1/17 were reviewed and approved. The executive summary of the Questions meetings results is reported below. Reference to the Questions reports is provided for more details.
+
+=== Question 10/17
+
+The report of Q10/17 can be found in link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0006[TD6R7]. It was approved.
+
+_Include here the executive summary of the results of this Question meeting, as drafted by the Rapporteur in the Question report under the item 2 “executive summary”._
+
+_If needed, add discussions held during WP closing plenary._
+
+=== Question 11/17
+
+The report of Q11/17 can be found in link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0007[TD7R3]. It was approved.
+
+_Include here the executive summary of the results of this Question meeting, as drafted by the Rapporteur in the Question report under the item 2 “executive summary”._
+
+_If needed, add discussions held during WP closing plenary._
+
+=== Question 15/17
+
+The report of Q15/17 can be found in link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0008[TD8R1]. It was approved.
+
+_Include here the executive summary of the results of this Question meeting, as drafted by the Rapporteur in the Question report under the item 2 “executive summary”._
+
+_If needed, add discussions held during WP closing plenary._
+
+== Draft new/revised Recommendations proposed for "approval" (TAP) or "consent" (AAP) or "determination" (TAP)
+
+=== Recommendations for TAP approval (WTSA Resolution 1,§9)
+
+The Following draft Recommendations are proposed for TAP approval.
+
+[cols="1,4,4,4,6,4,4,4"]
+.TAP approval
+|===
+|#|Question|Work item|Status|Title|Final Text|A.5 justification|Equivalent e.g. ISO/IEC
+
+|1|Q10/17|X.1284(X.afotak)| |Authentication framework based on one-time authentication key using distributed ledger technology|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0018[TD 18R1/1]||
+
+|===
+
+=== Recommendations for TAP determination (WTSA Resolution 1, §9)
+
+The Following draft Recommendations are proposed for TAP determination:
+
+[cols="1,4,4,4,6,4,4,4"]
+.TAP determination
+|===
+
+|#|Question|Work item|Status|Title|Final Text|A.5 justification|Equivalent e.g. ISO/IEC
+
+|1|Q10/17|X.1250rev| | Baseline capabilities for enhanced identity management and interoperability|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0042[TD 42/1]||
+
+|===
+
+=== Recommendations for AAP consent (Rec. ITU-T A.8)
+
+The Following draft Recommendations are proposed for consent
+
+[cols="1,4,4,4,6,4,4,4"]
+.AAP consent
+|===
+|#|Question|Work item|Status|Title|Final Text|A.5 justification|Equivalent e.g. ISO/IEC
+
+|1|Q10/17|X.oicc| | OpenID Connect Core 1.0 - Errata Set 2|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0041[TD 41R1/1]||
+
+|===
+
+=== Non-normative text (e.g., Supplements, Technical Reports, Technical Papers, Implementors' Guides or other documents) for agreement
+
+== Intellectual property statements
+
+The Chair of this WP meeting reminded the meeting participants of the ITU-T IPR Policy (see link:https://www.itu.int/en/ITU-T/ipr/Pages/default.aspx[IPR]) and asked those present whether anyone has knowledge of intellectual property rights issues, including patents, copyright for software or text, marks, the use of which may be required to implement or publish the Recommendation being considered.
+
+The Chair of this WP meeting reminded the participants that any ITU-T member organization putting forward a standardization proposal should draw the attention of the TSB Director to any known or pending patent and any other applicable IPR issues.
+
+_No IPR statements were received at this meeting_
+
+_Company xxx submitted / promised to submit to TSB a patent declaration for draft Recommendation X.yyy_
+
+== Outgoing liaison statements
+
+The following outgoing LSs were reviewed and prepared by the WP1/17
+
+[cols="1,4,4,6,6,8,4"]
+.Outgoing liaison statements
+|===
+|#|Questions|WP|For action to|For information to|Title|TD
+
+|1|Q10/17|WP1|_to ISO/IEC SC 27/WG 5 and ITU OWF_|_to ISO/IEC SC 27/WG 5 and ITU OWF_|LS/o on initiation of new work item of draft new Recommendation ITU-T X.sfdiw, "Security framework of digital identity wallet for the decentralized identity model" [to ISO/IEC SC 27/WG 5 and ITU OWF]|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0056[TD56/1]
+|2|Q10/17|WP1|_to ISO/IEC JTC 1/SC 27/WG 5_|_to ISO/IEC JTC 1/SC 27/WG 5_|LS/o on the development of common text on ITU-T X.aas \| ISO/IEC 27566-1 [to ISO/IEC JTC 1/SC 27/WG 5]|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0050[TD50R1/1]
+|3|Q10/17|WP1|_to OpenID Foundation_|_to OpenID Foundation_|LS/o/r on OpenID Connect Core 1.0 - Errata Set 2 as candidate ITU-T Recommendations (X.oicc) [to OpenID Foundation]|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0064[TD64/1]
+|4|Q10/17|WP1|_to Secure Identity Alliance (SIA)_|_to Secure Identity Alliance (SIA)_|LS/o on X.1281.Amd [to Secure Identity Alliance (SIA)]|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0059[TD59/1]
+|5|Q10/17|WP1|_to ETSI_|_to ETSI_|LS/o on initiation of new work item X.1281.Amd [to ETSI]|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0060[TD60/1]
+|6|Q11/17|WP1|_to IETF SIDROPS WG_|_to IETF SIDROPS WG_|LS/o on new work item of X.sgRPKI:Security guidelines on Resource Public Key Infrastructure deployment [to IETF SIDROPS WG]|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0044[TD44R1/1]
+|7|Q11/17|WP1|_to IETF PKIX, LAMPS, CA/Browser Forum_|_to IETF PKIX, LAMPS, CA/Browser Forum_|LS/o on initiation of new work item of Technical Report TR.PKIC-man-ib: Localized management framework of trusted Web PKI certificate supporting fine-grained configuration and technical guidelines for Web PKI certificate validation for Internet browser [to IETF PKIX, LAMPS, CA/Browser Forum]|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0062[TD62/1]
+|8|Q15/17|WP1|_to ITU-T JCA-QKDN, ITU-T SG2, ITU-T SG11, ITU-T SG13, ETSI ISG-QKD, ISO/IEC JTC1/SC27 WG2, ISO/IEC JTC1/SC27 WG3_|_to ITU-T JCA-QKDN, ITU-T SG2, ITU-T SG11, ITU-T SG13, ETSI ISG-QKD, ISO/IEC JTC1/SC27 WG2, ISO/IEC JTC1/SC27 WG3_|LS/o on work progress on Quantum-based security in SG17 [to ITU-T JCA-QKDN, ITU-T SG2, ITU-T SG11, ITU-T SG13, ETSI ISG-QKD, ISO/IEC JTC1/SC27 WG2, ISO/IEC JTC1/SC27 WG3]|link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0049[TD49/1]
+
+|===
+
+== Work programme
+
+SG17 reports use the place of a superscript next to a work item name to indicate its approval process
+
+-    ^*^ for TAP;
+
+-    ^**^ for agreement; and
+
+-    no superscript is for AAP
+
+=== New work items
+
+The meeting agreed to start work on the following new work items
+
+[cols="1,4,4,4,4,6,4,4,4"]
+.New work items
+|===
+|#|Question|Work Item|Status|Title|Editor|Base Text|Equivalent e.g. ISO/IEC|A.1/A.13 Justification Annex
+
+|1|Q10/17|X.aas|New|Age Assurance Systems| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0019[TD19/1]| |
+|2|Q10/17|X.sfdiw|New|Security framework of digital identity wallet for the decentralized identity model| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0051[TD51R1/1]| |
+|3|Q10/17|vision|New|Framework for out-of-band mutual authentication using mobile devices| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0029[TD29R1/1]| |
+|4|Q10/17|X.oicc|New| OpenID Connect Core 1.0 - Errata Set 2| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0041[TD41R1/1]| |
+|5|Q11/17|TR.PKIC-man-ib|New|Localized management framework of trusted Web PKI certificate supporting fine-grained configuration and technical guidelines for Web PKI certificate validation for Internet browser| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0061[TD61/1]| |
+|6|Q15/17|TR.SQKDN-SC|New|Security consideration for satellite-based quantum key distribution network| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0048[TD48/1]| |
+
+|===
+
+Note: The latest SG17 Work programme can be found at link:https://www.itu.int/ITU-T/workprog/wp_search.aspx?sg=17[Work programme]
+
+=== Deleted work items
+
+=== Updated WP1 work programme
+
+The current list of ongoing work items, including eventual new work items agreed at this meeting. (see item [[9.1]] above) as follows:
+
+[cols="1,4,4,4,10,8,4,4,4,4"]
+.Ongoing work items
+|===
+|#|Question|Work Item|Status|Title|Editor|Base Text|Equivalent e.g.,ISO/IEC|Target Date|Summary updated (Yes/No)
+
+|1|Q10/17|X.1250rev| | Baseline capabilities for enhanced identity management and interoperability| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0042[TD42/1]| | |
+|2|Q10/17|X.srdidm| |Security requirements for decentralized identity management systems using distributed ledger technology| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0045[TD45/1]| | |
+|3|Q10/17|X.tas| |Telebiometric authentication using speaker recognition| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0038[TD38/1]| | |
+|4|Q10/17|X.bvm| |Requirements for biometric variability management| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0021[TD21/1]| | |
+|5|Q10/17|X.accsadlt| |Access control platform using DLT (distributed ledger technology)-based authentication method| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0020[TD20/1]| | |
+|6|Q10/17|X.oob-pacs| |Framework for out-of-band physical access control systems using beacon-initiated mutual authentication| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0030[TD30/1]| | |
+|7||X.supp.divs (ex TR.divs)| || || | |
+|8||X.1254rev| || || | |
+|9|Q10/17|X.tis| |Telebiometric authentication based on information splitting| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0023[TD23/1]| | |
+|10||XSTR.SIMRegBio (ex TR.SIMRegBio)| || || | |
+|11|Q10/17|X.vctp| |Verifiable credential-based trust propagation framework in the decentralized identity| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0055[TD55/1]| | |
+|12||X.1281Amd1| || || | |
+|13|Q10/17|X.sfdiw| || |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0056[TD56/1]| | |
+|14||X.1280rev| || || | |
+|15|Q10/17|X.aas| || |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0050[TD50R1/1]| | |
+|16|Q11/17|X.dpki| |Decentralized public-key infrastructure| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0032[TD32R1/1]| | |
+|17||X.510 Amd.1| || || | |
+|18||X.509Amd.2| || || | |
+|19||XSTR.ac-pqc (ex TR.ac-pqc)| || || | |
+|20|Q15/17|X.sec_QKDNi| |Security requirements for Quantum Key Distribution Network interworking (QKDNi)| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0047[TD47/1]| | |
+|21|Q15/17|X.sec_QKD_profr| |Framework of quantum key distribution (QKD) protocols in QKD network| |link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0046[TD46/1]| | |
+|22||XSTR.hyb_qsafe (ex TR.hyb_qsafe)| || || | |
+|23||XSTR.kdc_qkdn (ex TR.kdc_qkdn)| || || | |
+|24||XSTR.QKDN-SP (ex TR.QKDN-SP)| || || | |
+|25||XSTR.SQKDN-SC (ex TR.SQKDN-SC)| || || | |
+|===
+
+Note: The latest SG17 Work programme can be found at link:https://www.itu.int/ITU-T/workprog/wp_search.aspx?sg=17[Work programme]
+
+== Candidate work items for decision at the next SG17 meeting
+
+The following work items are planned for decision at next SG17 meeting
+
+[cols="1,4,4,4,10,8,4,4,4"]
+.Candidate work items for next SG17 meeting
+|===
+|#|Question|Work item|Status|Title|Editor|Base Text|A.5 justification|Equivalent e.g.,ISO/IEC
+
+|1|Q10/17|X.supp.divs| |Rationale and initial approach of decentralized identity verification system (DIVS) based on verifiable data| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0022[TD22R2/1]| |
+|2||X.1254rev| || | | |
+|3|Q10/17|X.accsadlt| |Access control platform using DLT (distributed ledger technology)-based authentication method| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0020[TD20/1]| |
+|4|Q10/17|X.bvm| |Requirements for biometric variability management| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0021[TD21/1]| |
+|5|Q10/17|X.srdidm| |Security requirements for decentralized identity management systems using distributed ledger technology| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0045[TD45/1]| |
+|6|Q10/17|X.tas| |Telebiometric authentication using speaker recognition| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0038[TD38/1]| |
+|7|Q10/17|X.tis| |Telebiometric authentication based on information splitting| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0023[TD23/1]| |
+|8|Q10/17|X.oob-pacs| |Framework for out-of-band physical access control systems using beacon-initiated mutual authentication| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0030[TD30/1]| |
+|9|Q10/17|X.vctp| |Verifiable credential-based trust propagation framework in the decentralized identity| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0055[TD55/1]| |
+|10||X.509Amd.2| || | | |
+|11||X.510Amd.1| || | | |
+|12|Q15/17|TR.kdc_qkdn| |Key distribution center-based approaches in the service layer to manage keys supplied by QKDN| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0037[TD37/1]| |
+|13||TR.QKDN-SP| || | | |
+|14|Q15/17|X.sec_QKD_profr| |Framework of quantum key distribution (QKD) protocols in QKD network| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0046[TD46/1]| |
+|15|Q15/17|X.sec_QKDNi| |Security requirements for Quantum Key Distribution Network interworking (QKDNi)| | link:https://www.itu.int/md/meetingdoc.asp?lang=en&parent=T25-SG17-250408-TD-WP1-0047[TD47/1]| |
+
+|===
+
+== Planned interim Rapporteurs meetings
+
+The following interim Rapporteurs group meetings for Questions unser WP1/17 are proposed for approval
+
+[cols="1,4,4,10,8"]
+.Interim Rapporteur meetings
+|===
+|Question|Date|Place/Host|Terms of reference|Contact
+
+|15/17| | | |
+
+|===
+
+Details will be posted on the ITU-T SG17 Rapporteur Group meetings website: link:https://www.itu.int/net/ITU-T/lists/rgm.aspx?Group=17&type=interim[Rapporteur Group meetints website]
+
+== Scheduled WP or SG17 meetings
+
+=== Interim WP1/17 meetings are provided below
+
+WP1/17 does not plan to origanize a WP 1/17 before the next SG17 meeting in Month 20yy
+
+=== WP1/17 meeting during the next SG17 meeting
+
+WP1/17 is also planning to meet again during the next SG17 meeting to be held in _city country, x.ymonth, 20yy_
+
+Details will be posted on the ITU-T SG17 website:link:https://www.itu.int/go/tsg17[SG17]
+
+== Conclusion
+_The WPy/17 Chair thanked the delegates for their enthusiastic and active participation in the relevant activities of Working Party y/17 and each Question during the meeting. Special thanks were expressed to the SG17 Counsellor, Ms Xiaoya Yang (TSB), SG17 Project Officer Ms Gillian Makamara (TSB) and SG17 assistant Ms Erika Yoris (TSB) as well as all Associate Rapporteurs, Editors, and contributors for their dedicated and sustained efforts during this meeting._
+
+[appendix]
+[align=center]
+== [[Annex_A]]
+
+[align=center]
+A1. or A13 justification for new work items
+
+_Copy and past here all the A.1 and A.13 justification templates that were added in annex to each Question meeting report, if any._
+
+
+

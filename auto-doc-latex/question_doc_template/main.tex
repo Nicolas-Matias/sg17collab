@@ -1,0 +1,42 @@
+\documentclass[a4paper, 12pt]{article}
+
+% --- Load styles ---
+\usepackage{styles/packages}
+\usepackage{styles/formatting}
+\usepackage{array}
+
+\begin{document}
+
+% --- Front matter ---
+\thispagestyle{empty}
+\input{chapters/00-frontmatter}
+
+% --- Table of Contents ---
+\newpage
+\setcounter{page}{2}
+\tableofcontents
+\newpage
+
+% --- Main chapters ---
+\input{chapters/01-introduction}
+\input{chapters/02-executive-summary}
+\input{chapters/04-report-of-interim}
+\input{chapters/08-intellectual-property}
+\input{chapters/05-discussions}
+\input{chapters/06-draft-recommendations}
+\input{chapters/07-normative text}
+\input{chapters/09-outgoing-liaison-statements}
+\input{chapters/10-work-programme}
+\input{chapters/11-candidate-work-items}
+\input{chapters/12-planned-interim-meetings}
+\input{chapters/13-scheduled-meetings}
+\input{chapters/annex-a}
+\input{chapters/annex-b}
+\input{chapters/annex-c}
+
+
+% --- Bibliography ---
+\newpage
+\printbibliography
+
+\end{document}

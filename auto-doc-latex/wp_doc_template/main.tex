@@ -1,0 +1,48 @@
+\documentclass[a4paper, 12pt]{article}
+
+% --- Load styles ---
+\usepackage{styles/packages}
+\usepackage{styles/formatting}
+\usepackage{array}
+
+% --- Document metadata ---
+\title{wp-doc-template}
+\author{}
+\date{}
+
+\begin{document}
+
+% --- Front matter ---
+\thispagestyle{empty}
+\input{chapters/00-frontmatter}
+
+% --- Table of Contents ---
+\newpage
+\setcounter{page}{2}
+\tableofcontents
+\newpage
+
+% --- Main chapters ---
+\input{chapters/01-introduction}
+\input{chapters/02-executive-summary}
+\input{chapters/03-wp-structure-and-leadership}
+\input{chapters/04-intellectual-property}
+\input{chapters/05-opening-plenary-results}
+\input{chapters/06-appointments}
+\input{chapters/07-questions-meetings}
+\input{chapters/08-draft-recommendations}
+\input{chapters/09-normative-text}
+\input{chapters/10-outgoing-liaison-statements}
+\input{chapters/11-work-programme}
+\input{chapters/12-candidate-work-items}
+\input{chapters/13-planned-interim-meetings}
+\input{chapters/14-scheduled-meetings}
+\input{chapters/15-conclusion}
+\input{chapters/annex-a}
+\input{chapters/annex-b}
+
+% --- Bibliography ---
+\newpage
+\printbibliography
+
+\end{document}

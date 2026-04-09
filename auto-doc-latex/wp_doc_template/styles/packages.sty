@@ -1,0 +1,80 @@
+% packages.sty — Package declarations for wp1_report_to_test
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{styles/packages}[2025/12/10 Packages for WP1 Report]
+
+% --- Engine detection ---
+\usepackage{iftex}
+
+% --- Encoding & Fonts ---
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp}
+\else
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{mathptmx}  % Times New Roman
+
+% --- Page layout ---
+\usepackage[a4paper, margin=1.5cm]{geometry}
+
+% --- Math ---
+\usepackage{amsmath,amssymb}
+
+% --- Tables ---
+\usepackage{longtable,booktabs,array, tabularx}
+\usepackage{multirow}
+\usepackage{calc}
+
+% --- Table patches ---
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+
+% --- Footnotes in longtable ---
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+
+% --- Graphics ---
+\usepackage{graphicx}
+\graphicspath{{images/}}
+
+% --- Colors ---
+\usepackage{xcolor}
+
+% --- Highlighting / underline ---
+\ifLuaTeX
+  \usepackage{luacolor}
+  \usepackage[soul]{lua-ul}
+\else
+  \usepackage{soul}
+\fi
+
+% --- Microtype ---
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{%
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath}
+}{}
+
+% --- Hyperlinks ---
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{}
+\urlstyle{same}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=blue,
+  urlcolor=blue,
+  pdfcreator={LaTeX via pandoc}
+}
+
+% --- Bibliography ---
+\usepackage[backend=biber, style=numeric, sorting=nyt]{biblatex}
+\addbibresource{references.bib}
