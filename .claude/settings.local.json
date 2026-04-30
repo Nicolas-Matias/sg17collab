@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python generate_question_report.py \"../examples/Question/questionReport.json\")",
+      "Bash(python generate_wp_report.py \"../examples/WorkingParty/WPReport.json\")",
+      "Bash(python scripts-new/generate_question_report.py)",
+      "Bash(python scripts-new/generate_question_report.py test_config_question_report.json)",
+      "Bash(python scripts-new/generate_question_report.py examples/Question/questionReport.json)"
+    ]
+  }
+}

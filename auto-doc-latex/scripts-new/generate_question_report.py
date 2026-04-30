@@ -17,7 +17,7 @@ import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from common.config import load_question_config
-from common.itu_api import get_documents, get_question, get_study_group, get_work_programme
+from common.itu_api import get_documents, get_question, get_study_group, get_work_programme, get_work_item_editors
 from common.utils import (
     comma_separated_list, find_td_by_name, find_td_by_number,
     find_question_name_td_and_a5, compare_stripped, stripped_starts_with,
@@ -117,6 +117,9 @@ def main():
     # Display work programme summary
     print_work_programme_summary(work_item_details)
 
+    print("Fetching work item editors...")
+    editors = get_work_item_editors(work_item_details)
+
     approval = []
     determination = []
     consent = []
@@ -197,6 +200,7 @@ def main():
             work_items, work_item_details, new_work_items, deleted_work_items,
             candidate_next, outgoing_ls, rapporteur_meetings,
             td_to_work_item,
+            editors,
         )
 
     print("\nDone.")
@@ -347,7 +351,7 @@ def _generate_report(group, question, wp_number, start_date,
                      approval, determination, consent, non_normative,
                      work_items, work_item_details, new_work_items, deleted_work_items,
                      candidate_next, outgoing_ls, rapporteur_meetings,
-                     td_to_work_item=None):
+                     td_to_work_item=None, editors=None):
     """Generate all LaTeX snippet files for a Question report."""
 
     _gen_executive_summary(group, question, c_rows, approval, determination,
@@ -364,7 +368,8 @@ def _generate_report(group, question, wp_number, start_date,
                                work_items, td_to_work_item)
     _gen_outgoing_liaisons(group, question, wp_number, outgoing_ls, wp_rows)
     _gen_work_programme(group, question, wp_number, work_item_details,
-                        new_work_items, deleted_work_items, c_rows, wp_rows)
+                        new_work_items, deleted_work_items, c_rows, wp_rows,
+                        editors)
     _gen_candidate_work_items(group, question, wp_number, candidate_next,
                               wp_rows, work_item_details)
     _gen_planned_meetings(group, question, wp_number, rapporteur_meetings, wp_rows)
@@ -651,15 +656,15 @@ def _gen_recommendation_table_rows(wp_rows, items, group, question, wp_number, h
         version = escape_latex(wp_wi.version) if wp_wi and wp_wi.version else ""
         equiv_num = escape_latex(wp_wi.equivNum) if wp_wi and wp_wi.equivNum else ""
 
+        # Removed # and Question columns
         if has_a5:
             lines.append(table_row_str([
-                num, f"Q{question}/{group}", escape_latex(work_item),
-                version, text_title, final_text, a5_text, equiv_num
+                escape_latex(work_item), version, text_title,
+                final_text, a5_text, equiv_num
             ]))
         else:
             lines.append(table_row_str([
-                num, f"Q{question}/{group}", escape_latex(work_item),
-                version, text_title, final_text
+                escape_latex(work_item), version, text_title, final_text
             ]))
     return "".join(lines)
 
@@ -672,16 +677,19 @@ def _gen_draft_recommendations(group, question, wp_number, wp_rows,
 
     # TAP approval
     rows = _gen_recommendation_table_rows(wp_rows, approval, group, question, wp_number, td_wi=td_wi)
+    rows = rows if rows.strip() else "NONE"
     write_result(RESULTS_DIR, "06-draft-rec-approval.tex",
                  f"\\newcommand{{\\approval}}{{\n{rows}}}\n")
 
     # TAP determination
     rows = _gen_recommendation_table_rows(wp_rows, determination, group, question, wp_number, td_wi=td_wi)
+    rows = rows if rows.strip() else "NONE"
     write_result(RESULTS_DIR, "06-draft-rec-determination.tex",
                  f"\\newcommand{{\\determination}}{{\n{rows}}}\n")
 
     # AAP consent
     rows = _gen_recommendation_table_rows(wp_rows, consent, group, question, wp_number, td_wi=td_wi)
+    rows = rows if rows.strip() else "NONE"
     write_result(RESULTS_DIR, "06-draft-rec-consent.tex",
                  f"\\newcommand{{\\consent}}{{\n{rows}}}\n")
 
@@ -709,11 +717,11 @@ def _gen_draft_recommendations(group, question, wp_number, wp_rows,
 
         text_title = escape_latex(split_title(td.title)[3])
 
+        # Removed # and Question columns
         lines.append(table_row_str([
-            num, f"Q{question}/{group}", escape_latex(work_item),
-            version, text_title, final_text
+            escape_latex(work_item), version, text_title, final_text
         ]))
-    rows = "".join(lines)
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "06-draft-rec-agreement.tex",
                  f"\\newcommand{{\\agreement}}{{\n{rows}}}\n")
 
@@ -732,13 +740,26 @@ def _gen_outgoing_liaisons(group, question, wp_number, outgoing_ls, wp_rows):
             action_to, info_to = _parse_liaison_destinations(title)
             td_name = make_href(URL + td.number.link,
                                 f"TD{element}{td.lastRev}/{wp_number}")
+
+        # Combine action_to and info_to in single column
+        combined_dest = []
+        if action_to:
+            combined_dest.append(f"For action: {action_to}")
+        if info_to:
+            combined_dest.append(f"For info: {info_to}")
+        destination = " / ".join(combined_dest) if combined_dest else ""
+
+        # New columns: Question | Title | For information / For action to | Deadline | TD number
         lines.append(table_row_str([
-            num, f"Q{question}/{group}", f"WP{wp_number}",
-            f"\\textit{{{escape_latex(action_to)}}}",
-            f"\\textit{{{escape_latex(info_to)}}}",
-            escape_latex(title), td_name
+            f"Q{question}/{group}",
+            escape_latex(title),
+            f"\\textit{{{escape_latex(destination)}}}",
+            "",  # Deadline - manual entry
+            td_name
         ]))
-    rows = "".join(lines)
+
+    # If no liaisons, output NONE instead of empty table
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "09-outgoing-liaisons.tex",
                  f"\\newcommand{{\\outgoingLiaisons}}{{\n{rows}}}\n")
 
@@ -773,51 +794,52 @@ def _parse_liaison_destinations(title):
 
 
 def _gen_work_programme(group, question, wp_number, work_item_details,
-                        new_work_items, deleted_work_items, c_rows, wp_rows):
+                        new_work_items, deleted_work_items, c_rows, wp_rows,
+                        editors=None):
     """10-work-programme table rows (new, deleted, ongoing)."""
+    editors = editors or {}
+
     # New work items
     lines = []
-    num = 0
     for row in c_rows:
         if is_new_work_item(row.title):
-            num += 1
             work_item, text_title = extract_new_work_item_info(row.title, wp_rows)
             base_text = td_href(row, "C")
+            # Removed # and Question columns: Work Item | Status | Title | Editor | Base Text | Equivalent | AAP
             lines.append(table_row_str([
-                num, f"{question}/{group}", escape_latex(work_item), "New",
-                escape_latex(text_title), "\\textit{manual}", base_text, ""
+                escape_latex(work_item), "New",
+                escape_latex(text_title), "\\textit{manual}", base_text, "", ""
             ]))
-    rows = "".join(lines)
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "10-wp-new-work-items.tex",
                  f"\\newcommand{{\\newWorkItems}}{{\n{rows}}}\n")
 
     # Deleted work items
     lines = []
-    for num, element in enumerate(deleted_work_items, 1):
+    for element in deleted_work_items:
         q_name, td = find_td_by_number(wp_rows, element)
         title = escape_latex(td.textTitle) if td else ""
         acronym = escape_latex(td.acronym) if td else ""
+        # Removed # and Question columns: Acronym | Title | AAP
         lines.append(table_row_str([
-            num, f"{question}/{group}", acronym, title
+            acronym, title, ""
         ]))
-    rows = "".join(lines)
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "10-wp-deleted-work-items.tex",
                  f"\\newcommand{{\\deletedWorkItems}}{{\n{rows}}}\n")
 
     # Ongoing work items — only "Under study" status
     lines = []
-    num = 0
     for wi in work_item_details:
         name = wi.workItem or ""
         title = wi.title or ""
         status = wi.status or ""
         equiv = wi.equivNum or ""
         timing = wi.timing or ""
+        aap = wi.approvalProcess or ""
 
         if "under study" not in status.lower():
             continue
-
-        num += 1
 
         # Try to find matching WP TD for the base text link
         td_name = ""
@@ -832,12 +854,16 @@ def _gen_work_programme(group, question, wp_number, work_item_details,
             if not title:
                 title = td.textTitle
 
+        # Get editor from editors dict
+        editor = escape_latex(editors.get(name, ""))
+
+        # New columns (removed # and Question): Work Item | Status | Title | Editor | Base Text | Equivalent | Target Date | Summary updated | AAP
         lines.append(table_row_str([
-            num, f"{question}/{group}", escape_latex(name), escape_latex(status),
-            escape_latex(title), "", td_name, escape_latex(equiv),
-            escape_latex(timing), ""
+            escape_latex(name), escape_latex(status),
+            escape_latex(title), editor, td_name, escape_latex(equiv),
+            escape_latex(timing), "", escape_latex(aap)
         ]))
-    rows = "".join(lines)
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "10-wp-ongoing-work-items.tex",
                  f"\\newcommand{{\\ongoingWorkItems}}{{\n{rows}}}\n")
 
@@ -846,7 +872,7 @@ def _gen_candidate_work_items(group, question, wp_number, candidate_next,
                               wp_rows, work_item_details):
     """11-candidate-work-items table rows."""
     lines = []
-    for num, element in enumerate(candidate_next, 1):
+    for element in candidate_next:
         # Try to find matching WP TD
         _, td = find_td_by_name(wp_rows, element)
         if td is None:
@@ -872,12 +898,12 @@ def _gen_candidate_work_items(group, question, wp_number, candidate_next,
                 equiv = wi.equivNum or ""
                 break
 
+        # Removed # and Question columns: Acronym | Status | Title | Editor | Base Text | A.5 justification | Equivalent
         lines.append(table_row_str([
-            num, f"{question}/{group}", escape_latex(str(element)),
-            escape_latex(status), escape_latex(title), "", td_name, "",
-            escape_latex(equiv)
+            escape_latex(str(element)), escape_latex(status),
+            escape_latex(title), "", td_name, "", escape_latex(equiv)
         ]))
-    rows = "".join(lines)
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "11-candidate-work-items.tex",
                  f"\\newcommand{{\\candidateWorkItems}}{{\n{rows}}}\n")
 
@@ -893,12 +919,21 @@ def _gen_planned_meetings(group, question, wp_number, rapporteur_meetings, wp_ro
             title = escape_latex(td.title)
             td_ref = make_href(URL + td.number.link,
                                f"TD{element}{td.lastRev}/{wp_number}")
+        # Removed Question column: Date (time) | Place/Host | Terms of reference | Contact
         lines.append(table_row_str([
-            f"{question}/{group}", "", "", title or td_ref, ""
+            "", "", title or td_ref, ""
         ]))
-    rows = "".join(lines)
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "12-planned-meetings.tex",
                  f"\\newcommand{{\\plannedMeetings}}{{\n{rows}}}\n")
+
+
+def _format_source(source_value, group):
+    """Format source value, replacing ITU with 'ITU study group X' using non-breaking spaces."""
+    # Replace "ITU" with "ITU~study~group~17" (non-breaking spaces)
+    if source_value and "ITU" in source_value and "study" not in source_value.lower():
+        return f"ITU~study~group~{group}"
+    return source_value
 
 
 def _gen_annex_a(group, question, wp_number, c_rows, gen_rows, plen_rows, wp_rows):
@@ -909,9 +944,10 @@ def _gen_annex_a(group, question, wp_number, c_rows, gen_rows, plen_rows, wp_row
     lines = []
     for row in c_rows:
         name = make_href(URL + row.number.link, f"C{row.number.value}{row.lastRev}")
-        source = make_href(URL + row.source.link, row.source.value)
+        source_text = _format_source(row.source.value, group)
+        source = make_href(URL + row.source.link, source_text)
         lines.append(table_row_str([name, source, escape_latex(row.title), q_str]))
-    rows = "".join(lines)
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "annex-a-contributions.tex",
                  f"\\newcommand{{\\annexContributions}}{{\n{rows}}}\n")
 
@@ -919,9 +955,10 @@ def _gen_annex_a(group, question, wp_number, c_rows, gen_rows, plen_rows, wp_row
     lines = []
     for row in gen_rows:
         name = make_href(URL + row.number.link, f"TD{row.number.value}{row.lastRev}/G")
-        source = make_href(URL + row.source.link, row.source.value)
+        source_text = _format_source(row.source.value, group)
+        source = make_href(URL + row.source.link, source_text)
         lines.append(table_row_str([name, source, escape_latex(row.title), q_str]))
-    rows = "".join(lines)
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "annex-a-gen.tex",
                  f"\\newcommand{{\\annexGen}}{{\n{rows}}}\n")
 
@@ -929,9 +966,10 @@ def _gen_annex_a(group, question, wp_number, c_rows, gen_rows, plen_rows, wp_row
     lines = []
     for row in plen_rows:
         name = make_href(URL + row.number.link, f"TD{row.number.value}{row.lastRev}/P")
-        source = make_href(URL + row.source.link, row.source.value)
+        source_text = _format_source(row.source.value, group)
+        source = make_href(URL + row.source.link, source_text)
         lines.append(table_row_str([name, source, escape_latex(row.title), q_str]))
-    rows = "".join(lines)
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "annex-a-plen.tex",
                  f"\\newcommand{{\\annexPlen}}{{\n{rows}}}\n")
 
@@ -940,9 +978,10 @@ def _gen_annex_a(group, question, wp_number, c_rows, gen_rows, plen_rows, wp_row
     for row in wp_rows:
         name = make_href(URL + row.number.link,
                          f"TD{row.number.value}{row.lastRev}/{wp_number}")
-        source = make_href(URL + row.source.link, row.source.value)
+        source_text = _format_source(row.source.value, group)
+        source = make_href(URL + row.source.link, source_text)
         lines.append(table_row_str([name, source, escape_latex(row.title), q_str]))
-    rows = "".join(lines)
+    rows = "".join(lines) if lines else "NONE"
     write_result(RESULTS_DIR, "annex-a-wp.tex",
                  f"\\newcommand{{\\annexWp}}{{\n{rows}}}\n")
 
