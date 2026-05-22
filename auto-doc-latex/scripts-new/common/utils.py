@@ -79,9 +79,14 @@ def stripped_starts_with(string1, string2):
 
 
 def is_new_work_item(string):
-    """Check if a title indicates a new work item proposal."""
+    """Check if a title indicates a new work item proposal.
+
+    Matches: "Proposal", "NWI", or "new work item" in the title.
+    """
     lower = string.lower()
-    return 'new' in lower and 'work' in lower and 'item' in lower
+    return ('proposal' in lower or
+            'nwi' in lower or
+            ('new' in lower and 'work' in lower and 'item' in lower))
 
 
 # --- Role extraction helpers ---
@@ -150,12 +155,16 @@ def get_liaison_destination(table_rows, number):
 
 
 def get_meeting_reports(table_rows, question, group):
-    """Find all rapporteur group meeting reports for a given question."""
+    """Find all rapporteur group meeting reports for a given question.
+
+    Matches titles containing "RGM" or "Rapporteur Group Meeting" for the question.
+    """
     reports = []
+    q_pattern = f"q{question}/{group}".lower()
     for row in table_rows:
-        stripped = row.title.replace(' ', '')
-        if (stripped.startswith(f"ReportofQ{question}/{group}") and
-                "RapporteurGroupMeeting" in stripped):
+        title_lower = row.title.lower()
+        # Match "RGM" or "Rapporteur Group Meeting" with the question number
+        if q_pattern in title_lower and ("rgm" in title_lower or "rapporteur group meeting" in title_lower):
             reports.append(row)
     return reports
 
@@ -221,36 +230,28 @@ def extract_new_work_item_info(title, wp_rows):
 
     Returns (work_item_name, text_title).
     """
-    # Pattern 1: "X.name [revision]: title" or "X.name, \"title\""
-    m = re.search(r'(X\.\S+(?:\s+\S+)*?)\s*[:,]\s*"?(.*?)"?\s*$', title)
+    # Pattern 1: X.name or XSTR.name followed by quoted title
+    # e.g., "X.f2sp \"FAPI 2.0 security profile\"" or "XSTR.gidi \"Title here\""
+    m = re.search(r'(X\.[A-Za-z0-9._-]+|XSTR\.[A-Za-z0-9._-]+)\s*[,:]?\s*"([^"]+)"', title)
     if m:
-        name = m.group(1).strip().rstrip(',')
+        name = m.group(1).rstrip(',')
+        text = m.group(2).strip()
+        return name, text
+
+    # Pattern 2: X.name: title (without quotes)
+    # e.g., "X.sc-sd: Security capability..."
+    m = re.search(r'(X\.[A-Za-z0-9._-]+|XSTR\.[A-Za-z0-9._-]+)\s*:\s*(.+)$', title)
+    if m:
+        name = m.group(1).rstrip(',')
         text = m.group(2).strip().strip('"')
         return name, text
 
-    # Pattern 2: "TR.name [title]"
-    m = re.search(r'(TR\.\S+)(?:[\s,]+"?(.*?)"?\s*$)?', title)
+    # Pattern 3: TR.name with optional title
+    m = re.search(r'(TR\.[A-Za-z0-9._-]+)\s*[,:]?\s*"?([^"]*)"?', title)
     if m:
         name = m.group(1).rstrip(',')
-        text = (m.group(2) or "").strip().strip('"')
+        text = (m.group(2) or "").strip()
         return name, text
-
-    # Pattern 3: "XSTR.name [title]"
-    m = re.search(r'(XSTR\.\S+)(?:[\s,]+"?(.*?)"?\s*$)?', title)
-    if m:
-        name = m.group(1).rstrip(',')
-        text = (m.group(2) or "").strip().strip('"')
-        return name, text
-
-    # Fallback: match against "Output - new work item" WP TD titles
-    for row in wp_rows:
-        if "new work item" in row.title.lower():
-            m2 = re.search(r'new work item\s+(X\.\S+|TR\.\S+|XSTR\.\S+)', row.title, re.IGNORECASE)
-            if m2:
-                name = m2.group(1).rstrip(':')
-                if name.lower() in title.lower() or name.replace('.', '') in title.replace('.', ''):
-                    text = split_title(row.title)[3] if hasattr(row, 'textTitle') else ""
-                    return name, row.textTitle if hasattr(row, 'textTitle') and row.textTitle else text
 
     return "", ""
 
@@ -274,6 +275,32 @@ def detect_outgoing_liaisons(wp_rows):
             if val and val not in outgoing_ls:
                 outgoing_ls.append(val)
     return outgoing_ls
+
+
+def detect_processed_work_items(work_item_details, wp_rows):
+    """Detect under study work items that have a corresponding TD.
+
+    Cross-references work programme items with "Under study" status
+    against the TD list to find items that were actually processed.
+
+    Returns a list of tuples: (work_item_name, td_number, td_row).
+    """
+    processed = []
+    for wi in work_item_details:
+        status = (wi.status or '').strip()
+        if not status.startswith('Under study'):
+            continue
+        name = wi.workItem
+        if not name:
+            continue
+        _, td = find_td_by_name(wp_rows, name)
+        if td is None:
+            alt = extract_alt_name(name)
+            if alt:
+                _, td = find_td_by_name(wp_rows, alt)
+        if td is not None:
+            processed.append((name, td.number.value.strip(), td))
+    return processed
 
 
 def parse_timing(timing_str):
@@ -303,7 +330,8 @@ def print_work_programme_summary(work_items):
     for wi in work_items:
         status = wi.status or "?"
         process = wi.approvalProcess or "?"
+        version = wi.version or "?"
         name = wi.workItem or "?"
         if len(name) > 30:
             name = name[:27] + "..."
-        print(f"    {name:<30} Status: {status:<25} Process: {process}")
+        print(f"    {name:<30} Status: {status:<20} Version: {version:<10} Process: {process}")

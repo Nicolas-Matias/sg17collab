@@ -10,6 +10,7 @@ Fetches organizational data from ITU web pages:
 import pycurl
 import sys
 from io import BytesIO
+from urllib.parse import parse_qs, urlparse, unquote
 from bs4 import BeautifulSoup
 
 from common.models import (
@@ -19,6 +20,24 @@ from common.models import (
 )
 
 debug = False
+
+
+def _extract_source_from_url(href, fallback_text):
+    """Extract source name from URL 'source' parameter, with fallback to displayed text.
+
+    The ITU website sometimes truncates displayed source names but keeps
+    the full name in the URL's source filter parameter.
+    """
+    if not href:
+        return fallback_text
+    try:
+        parsed = urlparse(href)
+        params = parse_qs(parsed.query)
+        if 'source' in params and params['source']:
+            return unquote(params['source'][0])
+    except Exception:
+        pass
+    return fallback_text
 
 
 # ---------------------------------------------------------------------------
@@ -95,7 +114,7 @@ def get_documents(document_type=None, group=None, working_party=None,
                             if column.aElements[0].strongElements:
                                 value = column.aElements[0].strongElements[0]
                             elif column.aElements[0].contents:
-                                value = _clean(column.aElements[0].contents[0])
+                                value = _clean(column.aElements[0].get_text())
                             href = column.aElements[0].href
                             number = ValueAndLink(value, href)
                         if column.fontElements:
@@ -111,14 +130,14 @@ def get_documents(document_type=None, group=None, working_party=None,
 
                     elif col_idx == 3:  # Source
                         if column.aElements:
-                            source = ValueAndLink(
-                                column.aElements[0].contents[0],
-                                column.aElements[0].href
-                            )
+                            href = column.aElements[0].href
+                            displayed_text = column.aElements[0].get_text()
+                            source_name = _extract_source_from_url(href, displayed_text)
+                            source = ValueAndLink(source_name, href)
 
                     elif col_idx == 4:  # Related questions
                         related_questions = [
-                            ValueAndLink(a.contents[0], a.href)
+                            ValueAndLink(a.get_text(), a.href)
                             for a in column.aElements
                         ]
 
@@ -435,7 +454,7 @@ _WP_SEARCH_URL = "https://www.itu.int/ITU-T/workprog/wp_search.aspx"
 _TABULAR_HEADERS = [
     'Work item', 'Question', 'Equiv. Num.', 'Status', 'Timing',
     'Approval process', 'Version', 'Liaison relationship',
-    'Subject / Title', 'Priority',
+    'Subject/Title', 'Priority',
 ]
 
 
@@ -484,8 +503,11 @@ def get_work_programme(group=None, question=None, working_party=None, start=None
             return []
 
     # Step 3: Fetch with all ISNs and parse the tabular view table
+    # Use full URL with all statuses and larger page size to get all items
     url3 = (f"{_WP_SEARCH_URL}?isn_sp={isn_sp}&isn_sg={isn_sg}"
-            f"&isn_wp={isn_wp}&isn_qu={isn_qu}")
+            f"&isn_wp={isn_wp}&isn_qu={isn_qu}"
+            f"&isn_status=-1,8,1,3,7,2,4,6,5&pg_size=100&details=0&field=acdefghijo")
+    print(f"  Fetching work programme from: {url3}")
     html3 = _fetch_url(url3, encoding='utf-8')
     soup3 = BeautifulSoup(html3, 'html.parser')
 
@@ -544,7 +566,8 @@ def _parse_work_programme_table(soup):
         for row_idx, row in enumerate(rows):
             cells = row.find_all(['td', 'th'])
             texts = [c.get_text().strip() for c in cells]
-            if texts == _TABULAR_HEADERS:
+            # Flexible header matching - check if key columns exist
+            if len(texts) >= 10 and texts[0] == 'Work item' and 'Status' in texts:
                 # Parse data rows after the header
                 for data_row in rows[row_idx + 1:]:
                     data_cells = data_row.find_all(['td', 'th'])
@@ -554,8 +577,12 @@ def _parse_work_programme_table(soup):
                     # Extract detail page link from work item name cell
                     link_tag = data_cells[0].find('a') if data_cells else None
                     detail_link = link_tag.get('href', '') if link_tag else ''
+                    # Extract work item name: start with X, stop at first space
+                    work_item_name = vals[0]
+                    if ' ' in work_item_name:
+                        work_item_name = work_item_name.split(' ')[0]
                     wi = WorkItem(
-                        workItem=vals[0],
+                        workItem=work_item_name,
                         question=vals[1],
                         title=vals[8],
                         timing=vals[4],
@@ -789,9 +816,10 @@ def _parse_html_tables(html):
                 for a in td.find_all("a"):
                     href = a.attrs.get('href')
                     strong_texts = [
-                        s.contents[0] for s in a.find_all("strong") if s.contents
+                        s.get_text() for s in a.find_all("strong")
                     ]
-                    a_el = AElement(href=href, strongElements=strong_texts, contents=a.contents)
+                    a_el = AElement(href=href, strongElements=strong_texts,
+                                    contents=a.contents, text=a.get_text())
                     column.aElements.append(a_el)
 
                 for font in td.find_all("font"):

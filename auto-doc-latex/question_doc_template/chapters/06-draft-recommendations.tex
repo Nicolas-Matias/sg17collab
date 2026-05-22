@@ -1,14 +1,15 @@
 % 06-draft-recommendations.tex — Draft new/revised Recommendations
 
-\input{chapters/results/06-draft-rec-approval}
-\input{chapters/results/06-draft-rec-determination}
-\input{chapters/results/06-draft-rec-consent}
+\input{chapters/variables/06-approval}
+\input{chapters/variables/06-determination}
+\input{chapters/variables/06-consent}
 \section{Draft new/revised Recommendations proposed for ``approval'' (TAP) or ``consent'' (AAP) or ``determination'' (TAP)}\label{draft-newrevised-recommendations-proposed-for-approval-tap-or-consent-aap-or-determination-tap}
 
-Note: The rapporteur checked that the editor applied the \href{https://www.itu.int/en/ITU-T/studygroups/Documents/Doc-ITUT-Recs-Skelet.docx}{skeleton template to draft Recommendations} and that the following Recommendations are compliant with the \href{https://www.itu.int/oth/T0AF000004/en}{Author's guide}
+Note: The rapporteur should confirm that the editor applied the \href{https://www.itu.int/en/ITU-T/studygroups/Documents/Doc-ITUT-Recs-Skelet.docx}{skeleton template to draft Recommendations} and that the following Recommendations are compliant with the \href{https://www.itu.int/oth/T0AF000004/en}{Author's guide}
 
 \subsection{Recommendations for TAP approval (WTSA Resolution 1, \S9)}\label{recommendations-for-tap-approval-wtsa-resolution-19}
 
+\ifthenelse{\equal{\hasApproval}{true}}{%
 The Following draft Recommendations are proposed for TAP approval.
 
 \begin{center}
@@ -35,11 +36,14 @@ Table 3 - TAP approval
 \endhead
 \approval
 \end{longtable}
-}
-}
+}}
+}{None}
 
 \subsection{Recommendations for TAP determination (WTSA Resolution 1, \S9)}\label{recommendations-for-tap-determination-wtsa-resolution-1-9}
+
+\ifthenelse{\equal{\hasDetermination}{true}}{%
 The Following draft Recommendations are proposed for TAP determination:
+
 \begin{center}
 Table 4 - TAP determination
 \end{center}
@@ -63,11 +67,13 @@ Table 4 - TAP determination
 \endhead
 \determination
 \end{longtable}
-}
-
-}
+}}
+}{None}
 \subsection{Recommendations for AAP consent (Rec. ITU-T A.8)}\label{recommendations-for-aap-consent}
+
+\ifthenelse{\equal{\hasConsent}{true}}{%
 The Following draft Recommendations are proposed for AAP consent:
+
 \begin{center}
 Table 5 - AAP consent
 \end{center}
@@ -91,6 +97,5 @@ Table 5 - AAP consent
 \endhead
 \consent
 \end{longtable}
-}
-
-}
+}}
+}{None}

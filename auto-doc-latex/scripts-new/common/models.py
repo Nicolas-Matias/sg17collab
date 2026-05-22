@@ -147,10 +147,15 @@ class WorkItem:
 class AElement:
     """An <a> element parsed from HTML."""
 
-    def __init__(self, href=None, strongElements=None, contents=None):
+    def __init__(self, href=None, strongElements=None, contents=None, text=None):
         self.href = href
         self.strongElements = strongElements or []
         self.contents = contents or []
+        self.text = text or ""
+
+    def get_text(self):
+        """Get full text content (handles hyphenated names like 'Co-Rapporteur')."""
+        return self.text
 
 
 class Column:

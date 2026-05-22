@@ -20,12 +20,6 @@ def load_config(config_path):
         print(f"Error loading config {config_path}: {e}")
         sys.exit(1)
 
-    # Document type
-    doc_type = content.get('documentType')
-    if doc_type not in ("agenda", "report"):
-        print(f"Unknown document type: {doc_type}")
-        sys.exit(1)
-
     # Study group
     group = _get_int(content, 'group', "group")
 
@@ -41,7 +35,6 @@ def load_config(config_path):
     place = content.get('place', '')
 
     config = {
-        'documentType': doc_type,
         'group': group,
         'place': place,
         'start': start,
@@ -55,9 +48,17 @@ def load_config(config_path):
 
 
 def load_question_config(config_path):
-    """Load config for a Question report. Adds the 'question' field."""
+    """Load config for a Question report. Adds the 'question' and 'next_meeting' fields."""
     config = load_config(config_path)
     config['question'] = _get_int(config['_raw'], 'question', "question")
+
+    # Optional next_meeting date for filtering candidate work items
+    next_meeting_str = config['_raw'].get('next_meeting')
+    if next_meeting_str:
+        config['next_meeting'] = _parse_date(next_meeting_str, "next_meeting")
+    else:
+        config['next_meeting'] = None
+
     return config
 
 

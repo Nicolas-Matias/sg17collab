@@ -15,37 +15,48 @@ Automated generation of ITU-T meeting reports (Working Party reports and Questio
 ## Project structure
 
 ```
-itu-template/
+auto-doc-latex/
 ├── scripts-new/                    # Report generation scripts
 │   ├── generate_wp_report.py       # Working Party report generator
 │   ├── generate_question_report.py # Question report generator
+│   ├── questionReport.json         # Example Question config
 │   └── common/                     # Shared modules (ITU API, utilities)
 ├── wp_doc_template/                # WP report LaTeX template
 │   ├── main.tex                    # Main document entry point
 │   ├── chapters/                   # Chapter .tex files
-│   │   └── results/                # Auto-generated LaTeX snippets
+│   │   └── variables/              # Auto-generated LaTeX snippets
 │   └── styles/                     # LaTeX style files
-├── question_doc_template/          # Question report LaTeX template
-│   ├── main.tex
-│   ├── chapters/
-│   │   └── results/
-│   └── styles/
-└── examples/                       # Example JSON config files
-    ├── WorkingParty/WPReport.json
-    └── Question/questionReport.json
+└── question_doc_template/          # Question report LaTeX template
+    ├── main.tex
+    ├── chapters/
+    │   ├── 00-frontcover.tex       # Front cover
+    │   ├── 01-introduction.tex     # Introduction
+    │   ├── 02-executive-summary.tex
+    │   ├── 03-report-of-interim.tex
+    │   ├── 04-intellectual-property.tex
+    │   ├── 05-discussions.tex      # Includes 05-01 to 05-05
+    │   ├── 06-draft-recommendations.tex
+    │   ├── 07-non-normative-text.tex
+    │   ├── 08-outgoing-liaison-statements.tex
+    │   ├── 09-work-programme.tex
+    │   ├── 10-candidate-work-items.tex
+    │   ├── 11-planned-interim-meetings.tex
+    │   ├── 12-scheduled-meetings.tex
+    │   ├── annex-a.tex, annex-b.tex, annex-c.tex
+    │   └── variables/              # Auto-generated LaTeX snippets
+    └── styles/
 ```
 
 ## Step-by-step usage
 
 ### Step 1: Create a JSON configuration file
 
-Create a JSON file describing the meeting. Use the examples as a starting point.
+Create a JSON file describing the meeting.
 
-**For a Working Party report** (`examples/WorkingParty/WPReport.json`):
+**For a Working Party report**:
 
 ```json
 {
-  "documentType": "report",
   "group": 17,
   "workingParty": 1,
   "place": "Geneva",
@@ -57,35 +68,38 @@ Create a JSON file describing the meeting. Use the examples as a starting point.
 }
 ```
 
-| Field | Description |
-|-------|-------------|
-| `group` | Study Group number (e.g., 17) |
-| `workingParty` | Working Party number (e.g., 1) |
-| `place` | Meeting location |
-| `start` / `end` | Meeting dates in `YYYY/MM/DD` format |
-| `sessions` | Number of sessions |
-| `meetingDays` | List of meeting days in `YYYY/MM/DD` format |
-| `workProgramme` | Path to the work programme CSV file (relative to the JSON file) |
+| Field | Required | Description |
+|-------|----------|-------------|
+| `group` | Yes | Study Group number (e.g., 17) |
+| `workingParty` | Yes | Working Party number (e.g., 1) |
+| `start` | Yes | Meeting start date in `YYYY/MM/DD` format |
+| `place` | No | Meeting location |
+| `end` | No | Meeting end date in `YYYY/MM/DD` format |
+| `sessions` | No | Number of sessions |
+| `meetingDays` | No | List of meeting days in `YYYY/MM/DD` format |
+| `workProgramme` | No | Path to work programme CSV file (relative to JSON file) |
 
-**For a Question report** (`examples/Question/questionReport.json`):
+**For a Question report** (`scripts-new/questionReport.json`):
 
 ```json
 {
-  "documentType": "report",
   "group": 17,
   "question": 10,
   "place": "Geneva",
-  "start": "2025/04/08",
-  "end": "2025/04/17"
+  "start": "2025/12/03",
+  "end": "2025/12/09",
+  "next_meeting": "2026/07/01"
 }
 ```
 
-| Field | Description |
-|-------|-------------|
-| `group` | Study Group number |
-| `question` | Question number (e.g., 10) |
-| `place` | Meeting location |
-| `start` / `end` | Meeting dates in `YYYY/MM/DD` format |
+| Field | Required | Description |
+|-------|----------|-------------|
+| `group` | Yes | Study Group number |
+| `question` | Yes | Question number (e.g., 10) |
+| `start` | Yes | Meeting start date in `YYYY/MM/DD` format |
+| `place` | No | Meeting location |
+| `end` | No | Meeting end date in `YYYY/MM/DD` format |
+| `next_meeting` | No | Next meeting date (for filtering candidate work items) |
 
 ### Step 2: Run the generation script
 
@@ -95,23 +109,23 @@ From the `scripts-new/` directory, run the appropriate script:
 cd scripts-new
 
 # For a Working Party report
-python generate_wp_report.py ../examples/WorkingParty/WPReport.json
+python generate_wp_report.py path/to/config.json
 
 # For a Question report
-python generate_question_report.py ../examples/Question/questionReport.json
+python generate_question_report.py questionReport.json
 ```
 
 The script will:
 1. Read the JSON configuration
 2. Fetch meeting data from the ITU website (documents, leadership, work programme)
-3. Generate LaTeX snippet files in the template's `chapters/results/` directory
+3. Generate LaTeX snippet files in the template's `chapters/variables/` directory
 
 ### Step 3: Fill in manual sections
 
-Some sections require manual input. Open the generated `.tex` files in `chapters/results/` and look for:
+Some sections require manual input. Open the generated `.tex` files in `chapters/variables/` and look for:
 
-- `\textit{For manual entry.}` -- sections that need to be written by hand (e.g., executive summary, deleted work items)
-- `\textit{TODO: write the observation here}` -- placeholders after incoming liaison statements that need observations
+- `\textit{For manual entry.}` -- sections that need to be written by hand
+- `\textit{TODO: write the observation here}` -- placeholders for observations
 
 The following sections typically require manual input:
 

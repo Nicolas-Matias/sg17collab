@@ -30,6 +30,9 @@
 
 % --- Table patches ---
 \usepackage{etoolbox}
+
+% --- Conditionals ---
+\usepackage{ifthen}
 \makeatletter
 \patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
 \makeatother
