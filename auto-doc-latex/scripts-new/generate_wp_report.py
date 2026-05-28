@@ -21,14 +21,12 @@ from common.utils import (
     comma_separated_list, find_td_by_name, find_td_by_number,
     find_question_name_td_and_a5, compare_stripped,
     is_new_work_item, get_rapporteurs, get_associate_rapporteurs,
-    get_chairs, get_vice_chairs,
-    get_document_title, get_liaison_destination, get_meeting_reports,
-    extract_alt_name, auto_detect_from_work_programme,
-    extract_new_work_item_info, detect_outgoing_liaisons,
-    parse_timing, print_work_programme_summary,
+    get_chairs, get_vice_chairs, get_meeting_reports,
+    extract_alt_name, extract_new_work_item_info, detect_outgoing_liaisons,
+    detect_processed_work_items, parse_timing, print_work_programme_summary,
 )
 from common.latex import (
-    URL, escape_latex, make_href, td_href, write_result, table_row_str,
+    URL, escape_latex, make_href, write_result, table_row_str,
 )
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -42,7 +40,6 @@ def main():
         sys.exit(1)
 
     config = load_wp_config(sys.argv[1])
-    doc_type = config['documentType']
     group = config['group']
     wp_number = config['workingParty']
     place = config['place']
@@ -50,8 +47,7 @@ def main():
     start_string = config['startString']
     start_date = config['startDate']
     end = config['end']
-    sessions = config.get('sessions')
-    meeting_days = config.get('meetingDays') or []
+    next_meeting = config['next_meeting']
 
     # ---------------------------------------------------------------
     # Fetch data from ITU website
@@ -121,51 +117,52 @@ def main():
     determination = []
     consent = []
     non_normative = []
-    new_work_items = []
-    deleted_work_items = []
     candidate_next = []
-    outgoing_ls = []
     rapporteur_meetings = []
+    new_work_items = []
     interim_meetings = []
 
-    # Auto-detect approval/consent/determination/agreement from work programme
-    # status (e.g. "Consented 2025-04-17" → consent list)
-    td_to_work_item = auto_detect_from_work_programme(
-        work_item_details, wp_rows,
-        approval, determination, consent, non_normative)
-
-    # Auto-detect outgoing liaisons from WP TDs
-    outgoing_ls = detect_outgoing_liaisons(wp_rows)
-
-    # Auto-detect from TD document types
+    # Auto-detect approval/consent/determination/agreement from TD documentType
+    # (parsed from TD title, e.g., "Approval - X.1234: Title")
+    td_to_work_item = {}
     for row in wp_rows:
+        val = row.number.value.strip()
         if row.documentType == 'Approval':
-            val = row.number.value.strip()
             if val not in approval:
                 approval.append(val)
-    for row in wp_rows:
-        if row.documentType == 'Determination':
-            val = row.number.value.strip()
+        elif row.documentType == 'Determination':
             if val not in determination:
                 determination.append(val)
-    for row in wp_rows:
-        if row.documentType == 'Consent':
-            val = row.number.value.strip()
+        elif row.documentType == 'Consent':
             if val not in consent:
                 consent.append(val)
-    for row in wp_rows:
-        if row.documentType == 'Agreement':
-            val = row.number.value.strip()
+        elif row.documentType == 'Agreement':
             if val not in non_normative:
                 non_normative.append(val)
 
+        # Build td_to_work_item mapping
+        work_item_name = row.recommendation or row.acronym
+        if work_item_name:
+            for wi in work_item_details:
+                wi_name = wi.workItem or ""
+                if wi_name and (work_item_name in wi_name or wi_name in work_item_name):
+                    td_to_work_item[val] = wi
+                    break
+
+    # Auto-detect work items progressed (under study items with a TD)
+    processed_work_items = detect_processed_work_items(work_item_details, wp_rows)
+
+    # Auto-detect outgoing liaisons from GEN TDs (LS/O in title)
+    outgoing_ls = detect_outgoing_liaisons(gen_rows)
+
     # Auto-detect candidate work items for next SG meeting
-    # Criteria: "Under study" items with timing ≤ next SG meeting (~6 months out)
-    from datetime import datetime, timedelta
-    meeting_start = config['start']
-    if isinstance(meeting_start, str):
-        meeting_start = datetime.strptime(meeting_start, '%Y/%m/%d')
-    next_meeting = meeting_start + timedelta(days=180)
+    # Criteria: "Under study" items with timing between end of current meeting and next_meeting
+    from datetime import timedelta
+    # Use next_meeting from config if provided, otherwise estimate 6 months out
+    if next_meeting:
+        next_meeting_date = next_meeting
+    else:
+        next_meeting_date = start + timedelta(days=180)
     for wi in work_item_details:
         status = (wi.status or '').strip()
         if not status.startswith('Under study'):
@@ -174,7 +171,8 @@ def main():
         if not timing:
             continue
         timing_date = parse_timing(timing)
-        if timing_date and timing_date <= next_meeting:
+        # Candidate if timing is between end of current meeting and next meeting
+        if timing_date and end and timing_date > end and timing_date <= next_meeting_date:
             name = wi.workItem or ""
             if name and name not in candidate_next:
                 candidate_next.append(name)
@@ -192,7 +190,7 @@ def main():
 
     # Scrape next SG meeting info from ITU website
     print(f"\nFetching next SG{group} meeting info...")
-    next_sg_meeting = get_next_sg_meeting(group, after_date=meeting_start)
+    next_sg_meeting = get_next_sg_meeting(group, after_date=start)
     if next_sg_meeting:
         print(f"  Next SG{group} meeting: {next_sg_meeting['city']}, "
               f"{next_sg_meeting['date_range']}")
@@ -234,10 +232,9 @@ def main():
     os.makedirs(RESULTS_DIR, exist_ok=True)
     print(f"\nGenerating LaTeX snippets to {RESULTS_DIR}/")
 
-    if doc_type == "agenda":
-        # WP agenda not implemented in original script
-        print("WP agenda generation not yet implemented.")
-        sys.exit(0)
+    # Sessions and meeting_days are optional - use None as default for manual entry
+    sessions = None
+    meeting_days = []
 
     # --- Variables ---
     _generate_variables(group, wp_number, question_numbers, place, start,
@@ -251,9 +248,7 @@ def main():
     _gen_introduction(group, wp_number, place, start, end, chairs, vice_chairs,
                        agenda, agenda_td_number, sessions, meeting_days)
     _gen_executive_summary(group, wp_number, approval, determination, consent,
-                           non_normative, work_items, new_work_items, deleted_work_items,
-                           candidate_next, outgoing_ls, rapporteur_meetings,
-                           wp_rows)
+                           non_normative, processed_work_items, outgoing_ls)
     _gen_structure_leadership(group, wp_number, chairs, vice_chairs,
                               question_numbers, questions_details)
     _gen_documentation(group, wp_number, question_numbers, start_date, period,
@@ -263,18 +258,14 @@ def main():
                                 wp_rows, plen_rows, gen_rows)
     _gen_appointments(group, wp_number, question_numbers, questions_details)
     _gen_question_meetings(group, wp_number, question_numbers, wp_rows, c_rows,
-                           approval, determination, consent, non_normative,
-                           work_items, new_work_items, deleted_work_items,
-                           candidate_next, outgoing_ls, rapporteur_meetings,
-                           work_item_details=work_item_details,
-                           td_to_work_item=td_to_work_item)
+                           gen_rows, work_item_details)
     _gen_draft_recommendations(group, wp_number, wp_rows, approval, determination,
                                consent, non_normative,
                                td_to_work_item=td_to_work_item)
-    _gen_outgoing_liaisons(group, wp_number, question_numbers, outgoing_ls, wp_rows)
+    _gen_outgoing_liaisons(group, wp_number, question_numbers, outgoing_ls, gen_rows)
     _gen_work_programme(group, wp_number, question_numbers, work_items,
-                        work_item_details, new_work_items, deleted_work_items,
-                        c_rows, wp_rows, editors=editors)
+                        work_item_details, new_work_items,
+                        wp_rows, editors=editors)
     _gen_candidate_work_items(group, wp_number, candidate_next, wp_rows,
                               work_item_details, editors=editors)
     _gen_planned_meetings(group, wp_number, question_numbers, questions,
@@ -282,7 +273,9 @@ def main():
     _gen_scheduled_meetings(group, wp_number, interim_meetings, next_sg_meeting)
     _gen_ipr(group, wp_number, wp_rows)
     _gen_conclusion(group, wp_number, chairs, sg_roles=wp_details.sg_roles)
-    _gen_annex_a(group, wp_number, wp_rows, work_item_details)
+    _gen_annex_a_docs(group, wp_number, c_rows, gen_rows, plen_rows, wp_rows)
+    _gen_annex_b_reflectors(group, question_numbers)
+    _gen_annex_c_new_work_items(wp_number, wp_rows)
 
     print("\nDone.")
 
@@ -450,84 +443,19 @@ def _gen_introduction(group, wp_number, place, start, end, chairs, vice_chairs,
 
 
 def _gen_executive_summary(group, wp_number, approval, determination, consent,
-                           non_normative, work_items, new_work_items, deleted_work_items,
-                           candidate_next, outgoing_ls, rapporteur_meetings,
-                           wp_rows):
+                           non_normative, processed_work_items, outgoing_ls):
     """02-executive-summary content."""
-    def td_list(items):
-        """Format a list of TD numbers with 'TD' prefix."""
-        return ", ".join(f"TD{str(e).strip()}" for e in items)
-
     lines = [
-        f"\\textbf{{Note: This section must be reviewed by the WP Chair for accuracy.}}\n",
-        f"\\textit{{Include here an executive summary of the executive summaries "
-        f"of Questions of this WP meeting.}}\n",
         f"During this SG{group} meeting, WP{wp_number}/{group} achieved the following results:\n",
         "\\begin{itemize}",
+        f"  \\item Recommendations finalized and proposed for TAP Approval: {len(approval)}",
+        f"  \\item Recommendations finalized and proposed for TAP Consent: {len(consent)}",
+        f"  \\item Recommendations finalized and proposed for TAP Determination: {len(determination)}",
+        f"  \\item Recommendations finalized and proposed for TAP Agreement: {len(non_normative)}",
+        f"  \\item Work items progressed: {len(processed_work_items)}",
+        f"  \\item Outgoing liaison statements agreed: {len(outgoing_ls)}",
+        "\\end{itemize}",
     ]
-
-    if approval:
-        lines.append(f"  \\item {len(approval)} Recommendations were finalized and "
-                     f"proposed for TAP approval: {td_list(approval)}")
-    if determination:
-        lines.append(f"  \\item {len(determination)} Recommendations were finalized and "
-                     f"proposed for TAP determination: {td_list(determination)}")
-    if consent:
-        lines.append(f"  \\item {len(consent)} Recommendations were finalized and "
-                     f"proposed for AAP consent: {td_list(consent)}")
-    if non_normative:
-        lines.append(f"  \\item {len(non_normative)} non-normative texts (e.g.\\ Supplements, "
-                     f"Technical reports, etc.) were finalized and proposed for agreement: "
-                     f"{td_list(non_normative)}")
-    if len(new_work_items) == 1:
-        lines.append(f"  \\item {len(new_work_items)} new work item was agreed to be started: "
-                     f"{comma_separated_list(new_work_items)}")
-    elif len(new_work_items) > 1:
-        lines.append(f"  \\item {len(new_work_items)} new work items were agreed to be started: "
-                     f"{comma_separated_list(new_work_items)}")
-    if len(deleted_work_items) == 1:
-        lines.append(f"  \\item {len(deleted_work_items)} work item was agreed to be deleted: "
-                     f"{comma_separated_list(deleted_work_items)}")
-    elif len(deleted_work_items) > 1:
-        lines.append(f"  \\item {len(deleted_work_items)} work items were agreed to be deleted: "
-                     f"{comma_separated_list(deleted_work_items)}")
-    if len(work_items) == 1:
-        lines.append(f"  \\item {len(work_items)} work item was progressed: "
-                     f"{comma_separated_list(work_items)}")
-    elif len(work_items) > 1:
-        lines.append(f"  \\item {len(work_items)} work items were progressed: "
-                     f"{comma_separated_list(work_items)}")
-    if len(candidate_next) == 1:
-        lines.append(f"  \\item {len(candidate_next)} work item is planned for action "
-                     f"in next SG{group} meeting: {comma_separated_list(candidate_next)}")
-    elif len(candidate_next) > 1:
-        lines.append(f"  \\item {len(candidate_next)} work items are planned for action "
-                     f"in next SG{group} meeting: {comma_separated_list(candidate_next)}")
-
-    if outgoing_ls:
-        destinations = [get_liaison_destination(wp_rows, n) for n in outgoing_ls]
-        destinations = [d for d in destinations if d]
-        if len(outgoing_ls) == 1:
-            lines.append(f"  \\item {len(outgoing_ls)} outgoing liaison statement was agreed "
-                         f"to be sent: {comma_separated_list(destinations)}")
-        else:
-            lines.append(f"  \\item {len(outgoing_ls)} outgoing liaison statements were agreed "
-                         f"to be sent: {comma_separated_list(destinations)}")
-
-    if rapporteur_meetings:
-        titles = [get_document_title(wp_rows, n) for n in rapporteur_meetings]
-        titles = [t for t in titles if t]
-        if len(rapporteur_meetings) == 1:
-            lines.append(f"  \\item {len(rapporteur_meetings)} interim (RGM) meeting was planned "
-                         f"before the next SG{group} meeting: {comma_separated_list(titles)}")
-        else:
-            lines.append(f"  \\item {len(rapporteur_meetings)} interim (RGM) meetings were planned "
-                         f"before the next SG{group} meetings: {comma_separated_list(titles)}")
-
-    lines.append("  \\item \\textit{Appointment of associate rapporteur / liaison officers, if any}")
-    lines.append("  \\item \\textit{Any other issue of importance (e.g.\\ OID assignment, "
-                 "roadmap updates, workshop, joint session, A.5 qualification)}")
-    lines.append("\\end{itemize}")
 
     write_result(RESULTS_DIR, "02-executive-summary-content.tex", "\n".join(lines))
 
@@ -540,23 +468,16 @@ def _gen_structure_leadership(group, wp_number, chairs, vice_chairs,
         "\\begin{itemize}",
     ]
     if len(chairs) == 1:
-        lines.append(f"  \\item Chair: {chairs[0]}")
+        lines.append(f"  \\item Chair: {escape_latex(chairs[0])}")
     else:
         for ch in chairs:
-            lines.append(f"  \\item Co-chair: {ch}")
+            lines.append(f"  \\item Co-chair: {escape_latex(ch)}")
     for vc in vice_chairs:
-        lines.append(f"  \\item Vice-chair: {vc}")
+        lines.append(f"  \\item Vice-chair: {escape_latex(vc)}")
     lines.append("\\end{itemize}\n")
 
     lines.append(f"The following table reproduces the current list of WP{wp_number}/{group} "
                  f"Questions and related Rapporteurs\n")
-
-    # Contact table for frontmatter
-    contact_lines = []
-    for role in (chairs + vice_chairs):
-        # The role string is "Name (Company, Address)"
-        # For the contact table, we keep the simple format
-        pass  # Contact table is generated separately if needed
 
     # Question/rapporteur table rows
     table_lines = []
@@ -569,8 +490,8 @@ def _gen_structure_leadership(group, wp_number, chairs, vice_chairs,
         for i in range(n_lines):
             q_name = f"Q{qn}/{group}" if i == 0 else ""
             q_title = escape_latex(qd.title or '') if i == 0 else ""
-            rapp = rapps[i] if i < len(rapps) else ""
-            assoc = assoc_rapps[i] if i < len(assoc_rapps) else ""
+            rapp = escape_latex(rapps[i]) if i < len(rapps) else ""
+            assoc = escape_latex(assoc_rapps[i]) if i < len(assoc_rapps) else ""
             table_lines.append(table_row_str([q_name, q_title, rapp, assoc]))
 
     lines.append("")  # separator
@@ -792,45 +713,12 @@ def _gen_appointments(group, wp_number, question_numbers, questions_details):
 
 
 def _gen_question_meetings(group, wp_number, question_numbers, wp_rows, c_rows,
-                           approval, determination, consent, non_normative,
-                           work_items, new_work_items, deleted_work_items,
-                           candidate_next, outgoing_ls, rapporteur_meetings,
-                           work_item_details=None, td_to_work_item=None):
-    """07-questions-meetings content — per-question executive summaries."""
-    td_wi = td_to_work_item or {}
-    wi_details = work_item_details or []
+                           gen_rows, work_item_details):
+    """07-questions-meetings content — per-question executive summaries.
+
+    Generates the same format as Question Report Part 2 for each question.
+    """
     lines = []
-
-    def _tds_for_question(td_numbers, q_name):
-        """Filter a list of TD numbers to those belonging to a question."""
-        result = []
-        for num in td_numbers:
-            for row in wp_rows:
-                if row.number.value.strip() == str(num).strip():
-                    if any(rq.value == q_name for rq in row.questions):
-                        result.append(num)
-                    break
-        return result
-
-    def _resolve_names(td_numbers):
-        """Convert TD numbers to work item names via td_to_work_item."""
-        names = []
-        for num in td_numbers:
-            wi = td_wi.get(str(num).strip())
-            if wi and wi.workItem:
-                names.append(wi.workItem)
-            else:
-                names.append(f"TD{num}")
-        return names
-
-    def _wi_names_for_question(wi_name_list, q_number):
-        """Filter work item names by question using work_item_details."""
-        q_str = str(q_number)
-        q_wi_names = set()
-        for wi in wi_details:
-            if wi.question and str(wi.question) == q_str:
-                q_wi_names.add(wi.workItem)
-        return [name for name in wi_name_list if name in q_wi_names]
 
     for qn in question_numbers:
         q_name = f"Q{qn}/{group}"
@@ -844,90 +732,119 @@ def _gen_question_meetings(group, wp_number, question_numbers, wp_rows, c_rows,
                 q_report = make_href(URL + row.number.link,
                                      f"TD{row.number.value}{row.lastRev}")
                 break
-        lines.append(f"The report of Q{qn}/{group} can be found in {q_report}. It was approved.\n")
+        if q_report:
+            lines.append(f"The report of Q{qn}/{group} can be found in {q_report}. It was approved.\n")
 
         # Count contributions for this question
         q_contributions = [r for r in c_rows
                            if any(rq.value == q_name for rq in r.questions)]
 
-        # Filter per-question data
-        q_approval = _tds_for_question(approval, q_name)
-        q_determination = _tds_for_question(determination, q_name)
-        q_consent = _tds_for_question(consent, q_name)
-        q_agreement = _tds_for_question(non_normative, q_name)
-        q_new_wi = _wi_names_for_question(new_work_items, qn)
-        q_deleted_wi = _wi_names_for_question(deleted_work_items, qn)
-        q_candidate = _wi_names_for_question(candidate_next, qn)
-        q_outgoing = _tds_for_question(outgoing_ls, q_name)
-        q_rapporteur_meetings = _tds_for_question(rapporteur_meetings, q_name)
+        # Filter WP TDs for this question
+        q_wp_rows = [r for r in wp_rows if any(rq.value == q_name for rq in r.questions)]
 
-        # Work items progressed for this question
-        q_work_items = _wi_names_for_question(work_items, qn)
+        # Filter GEN TDs for this question
+        q_gen_rows = [r for r in gen_rows if any(rq.value == q_name for rq in r.questions)]
 
-        # Build executive summary items
-        items = []
-        lines.append(f"During this meeting, {q_name} received "
+        # Detect approval/consent/determination/agreement from documentType (same as Question Report)
+        q_approval = []
+        q_determination = []
+        q_consent = []
+        q_agreement = []
+        for row in q_wp_rows:
+            val = row.number.value.strip()
+            if row.documentType == 'Approval':
+                if val not in q_approval:
+                    q_approval.append(val)
+            elif row.documentType == 'Determination':
+                if val not in q_determination:
+                    q_determination.append(val)
+            elif row.documentType == 'Consent':
+                if val not in q_consent:
+                    q_consent.append(val)
+            elif row.documentType == 'Agreement':
+                if val not in q_agreement:
+                    q_agreement.append(val)
+
+        # Work items progressed (under study items with a TD)
+        q_work_item_details = [wi for wi in work_item_details
+                               if wi.question and str(wi.question) == str(qn)]
+        q_processed = detect_processed_work_items(q_work_item_details, q_wp_rows)
+
+        # Outgoing liaison statements from GEN TDs (LS/O in title)
+        q_outgoing_ls = detect_outgoing_liaisons(q_gen_rows)
+
+        # Build executive summary
+        lines.append(f"During this SG{group} meeting, {q_name} received "
                      f"{len(q_contributions)} contribution{'s' if len(q_contributions) != 1 else ''} "
                      f"and achieved the following results:\n")
 
+        # Helper to make TD links
+        def _make_td_links(td_numbers, rows, suffix=""):
+            links = []
+            for n in td_numbers:
+                td = None
+                for row in rows:
+                    if row.number.value.strip() == str(n).strip():
+                        td = row
+                        break
+                if td:
+                    links.append(make_href(URL + td.number.link, f"TD {n}{suffix}"))
+                else:
+                    links.append(f"TD {n}{suffix}")
+            return links
+
+        items = []
+
+        # Approval - always show, "None" if empty
         if q_approval:
-            names = _resolve_names(q_approval)
-            items.append(f"  \\item {len(q_approval)} Recommendation{'s' if len(q_approval) != 1 else ''} "
-                         f"were finalized and proposed for TAP approval: "
-                         f"{comma_separated_list(names)}")
-        if q_determination:
-            names = _resolve_names(q_determination)
-            items.append(f"  \\item {len(q_determination)} Recommendation{'s' if len(q_determination) != 1 else ''} "
-                         f"were finalized and proposed for TAP determination: "
-                         f"{comma_separated_list(names)}")
-        if q_consent:
-            names = _resolve_names(q_consent)
-            items.append(f"  \\item {len(q_consent)} Recommendation{'s' if len(q_consent) != 1 else ''} "
-                         f"were finalized and proposed for AAP consent: "
-                         f"{comma_separated_list(names)}")
-        if q_agreement:
-            names = _resolve_names(q_agreement)
-            items.append(f"  \\item {len(q_agreement)} non-normative text{'s' if len(q_agreement) != 1 else ''} "
-                         f"(e.g.\\ Supplements, Technical reports, etc.) were finalized and "
-                         f"proposed for agreement: {comma_separated_list(names)}")
-        if q_work_items:
-            items.append(f"  \\item {len(q_work_items)} work item{'s' if len(q_work_items) != 1 else ''} "
-                         f"were progressed: {comma_separated_list(q_work_items)}")
-        if q_new_wi:
-            items.append(f"  \\item {len(q_new_wi)} new work item{'s' if len(q_new_wi) != 1 else ''} "
-                         f"were agreed to be started: {comma_separated_list(q_new_wi)}")
-
-        # Discontinued (always show, even if 0)
-        items.append(f"  \\item {len(q_deleted_wi)} work item{'s' if len(q_deleted_wi) != 1 else ''} "
-                     f"were agreed to be discontinued: "
-                     f"{comma_separated_list(q_deleted_wi) if q_deleted_wi else 'None.'}")
-
-        if q_candidate:
-            items.append(f"  \\item {len(q_candidate)} text{'s' if len(q_candidate) != 1 else ''} "
-                         f"were agreed as candidate{'s' if len(q_candidate) != 1 else ''} "
-                         f"for decision in next SG{group} meeting: "
-                         f"{comma_separated_list(q_candidate)}")
-
-        if q_outgoing:
-            destinations = [get_liaison_destination(wp_rows, n) for n in q_outgoing]
-            destinations = [d for d in destinations if d]
-            items.append(f"  \\item {len(q_outgoing)} outgoing liaison statement{'s' if len(q_outgoing) != 1 else ''} "
-                         f"were agreed to be sent"
-                         f"{': ' + comma_separated_list(destinations) if destinations else '.'}")
-
-        if q_rapporteur_meetings:
-            titles = [get_document_title(wp_rows, n) for n in q_rapporteur_meetings]
-            titles = [t for t in titles if t]
-            items.append(f"  \\item {len(q_rapporteur_meetings)} RGM meeting{'s' if len(q_rapporteur_meetings) != 1 else ''} "
-                         f"were planned"
-                         f"{': ' + comma_separated_list(titles) if titles else '.'}")
-
-        if items:
-            lines.append("\\begin{itemize}")
-            lines.extend(items)
-            lines.append("\\end{itemize}\n")
+            links = _make_td_links(q_approval, q_wp_rows)
+            items.append(f"  \\item Recommendations finalized and proposed for TAP Approval: "
+                         f"{comma_separated_list(links)}")
         else:
-            lines.append("Work items were progressed.\n")
+            items.append(f"  \\item Recommendations finalized and proposed for TAP Approval: None")
+
+        # Consent - always show, "None" if empty
+        if q_consent:
+            links = _make_td_links(q_consent, q_wp_rows)
+            items.append(f"  \\item Recommendations finalized and proposed for TAP Consent: "
+                         f"{comma_separated_list(links)}")
+        else:
+            items.append(f"  \\item Recommendations finalized and proposed for TAP Consent: None")
+
+        # Determination - always show, "None" if empty
+        if q_determination:
+            links = _make_td_links(q_determination, q_wp_rows)
+            items.append(f"  \\item Recommendations finalized and proposed for TAP Determination: "
+                         f"{comma_separated_list(links)}")
+        else:
+            items.append(f"  \\item Recommendations finalized and proposed for TAP Determination: None")
+
+        # Agreement - always show, "None" if empty
+        if q_agreement:
+            links = _make_td_links(q_agreement, q_wp_rows)
+            items.append(f"  \\item Recommendations finalized and proposed for TAP Agreement: "
+                         f"{comma_separated_list(links)}")
+        else:
+            items.append(f"  \\item Recommendations finalized and proposed for TAP Agreement: None")
+
+        # Work items progressed - always show, "None" if empty
+        if q_processed:
+            td_links = [make_href(URL + td.number.link, f"TD {td_num}")
+                        for _, td_num, td in q_processed]
+            items.append(f"  \\item Work items progressed: {comma_separated_list(td_links)}")
+        else:
+            items.append(f"  \\item Work items progressed: None")
+
+        # Outgoing liaison statements - always show, "None" if empty
+        if q_outgoing_ls:
+            links = _make_td_links(q_outgoing_ls, q_gen_rows, "/G")
+            items.append(f"  \\item Outgoing liaison statements agreed: {comma_separated_list(links)}")
+        else:
+            items.append(f"  \\item Outgoing liaison statements agreed: None")
+
+        lines.append("\\begin{itemize}")
+        lines.extend(items)
+        lines.append("\\end{itemize}\n")
 
     write_result(RESULTS_DIR, "07-question-meetings.tex", "\n".join(lines))
 
@@ -935,14 +852,14 @@ def _gen_question_meetings(group, wp_number, question_numbers, wp_rows, c_rows,
 def _gen_draft_recommendations(group, wp_number, wp_rows, approval, determination,
                                consent, non_normative,
                                td_to_work_item=None):
-    """08-draft-recommendations table rows."""
+    """08-draft-recommendations and 09-agreement table rows."""
     td_wi = td_to_work_item or {}
 
     def _gen_table(items, has_a5=True):
         lines = []
         for element in items:
             q_name, td, a5 = find_question_name_td_and_a5(wp_rows, element)
-            final_text = ""
+            final_text = "no update"
             if td:
                 final_text = make_href(URL + td.number.link,
                                        f"TD {td.number.value}{td.lastRev}/{wp_number}")
@@ -951,7 +868,7 @@ def _gen_draft_recommendations(group, wp_number, wp_rows, approval, determinatio
                 a5_text = make_href(URL + a5.number.link,
                                     f"TD {a5.number.value}{a5.lastRev}/{wp_number}")
 
-            # Get work item name: prefer work programme data, fall back to TD fields
+            # Get work item name and version from work programme
             wp_wi = td_wi.get(element.strip())
             if wp_wi and wp_wi.workItem:
                 work_item = wp_wi.workItem
@@ -963,98 +880,99 @@ def _gen_draft_recommendations(group, wp_number, wp_rows, approval, determinatio
                 work_item = td.acronym
             else:
                 work_item = ""
-            text_title = escape_latex(td.textTitle) if td else ""
 
-            # Fill equiv from work programme if available
+            version = escape_latex(wp_wi.version) if wp_wi and wp_wi.version else ""
+            text_title = escape_latex(td.textTitle) if td else ""
             equiv_num = escape_latex(wp_wi.equivNum) if wp_wi and wp_wi.equivNum else ""
 
+            # Columns: Question | Work Item | Version | Title | Final Text | A.5 | Equivalent
             if has_a5:
                 lines.append(table_row_str([
-                    q_name, escape_latex(work_item), "",
+                    q_name, escape_latex(work_item), version,
                     text_title, final_text, a5_text, equiv_num
                 ]))
             else:
+                # Agreement: Question | Work Item | Version | Title | Final Text
                 lines.append(table_row_str([
-                    q_name, escape_latex(work_item), "",
+                    q_name, escape_latex(work_item), version,
                     text_title, final_text
                 ]))
         return "".join(lines)
 
+    # Approval
     rows = _gen_table(approval)
+    has_approval = "true" if approval else "false"
     write_result(RESULTS_DIR, "08-draft-rec-approval.tex",
+                 f"\\newcommand{{\\hasWpApproval}}{{{has_approval}}}\n"
                  f"\\newcommand{{\\wpApproval}}{{\n{rows}}}\n")
+
+    # Determination
     rows = _gen_table(determination)
+    has_determination = "true" if determination else "false"
     write_result(RESULTS_DIR, "08-draft-rec-determination.tex",
+                 f"\\newcommand{{\\hasWpDetermination}}{{{has_determination}}}\n"
                  f"\\newcommand{{\\wpDetermination}}{{\n{rows}}}\n")
+
+    # Consent
     rows = _gen_table(consent)
+    has_consent = "true" if consent else "false"
     write_result(RESULTS_DIR, "08-draft-rec-consent.tex",
+                 f"\\newcommand{{\\hasWpConsent}}{{{has_consent}}}\n"
                  f"\\newcommand{{\\wpConsent}}{{\n{rows}}}\n")
 
-    # Non-normative / agreement — reuse _gen_table (no A.5 column)
+    # Agreement (no A.5 column)
     rows = _gen_table(non_normative, has_a5=False)
+    has_agreement = "true" if non_normative else "false"
     write_result(RESULTS_DIR, "09-agreement.tex",
+                 f"\\newcommand{{\\hasWpAgreement}}{{{has_agreement}}}\n"
                  f"\\newcommand{{\\wpAgreement}}{{\n{rows}}}\n")
 
 
-def _gen_outgoing_liaisons(group, wp_number, question_numbers, outgoing_ls, wp_rows):
+def _gen_outgoing_liaisons(group, wp_number, question_numbers, outgoing_ls, gen_rows):
     """10-outgoing-liaison-statements table rows."""
     lines = []
     for element in outgoing_ls:
-        q_name, td = find_td_by_number(wp_rows, element)
+        q_name, td = find_td_by_number(gen_rows, element)
         title = ""
-        td_name = ""
+        td_name = "no update"
         action_to = ""
         info_to = ""
         if td:
             title = td.title
             action_to, info_to = _parse_liaison_destinations(title)
             td_name = make_href(URL + td.number.link,
-                                f"TD{element}{td.lastRev}/{wp_number}")
+                                f"TD {element}{td.lastRev}/G")
+            # Get question from TD
+            if td.questions:
+                q_name = td.questions[0].value if td.questions else ""
+
+        # Combine action_to and info_to in single column (without prefixes)
+        combined_dest = []
+        if action_to:
+            combined_dest.append(escape_latex(action_to))
+        if info_to:
+            combined_dest.append(escape_latex(info_to))
+        destination = " / ".join(combined_dest) if combined_dest else "\\textit{(manual entry)}"
+
+        # Columns: Question | Title | For info/action to | TD number
         lines.append(table_row_str([
-            q_name, f"WP{wp_number}",
-            f"\\textit{{{escape_latex(action_to)}}}",
-            f"\\textit{{{escape_latex(info_to)}}}",
-            escape_latex(title), td_name
+            q_name,
+            escape_latex(title),
+            destination,
+            td_name
         ]))
     rows = "".join(lines)
+    has_outgoing = "true" if outgoing_ls else "false"
     write_result(RESULTS_DIR, "10-outgoing-liaisons.tex",
+                 f"\\newcommand{{\\hasWpOutgoingLiaisons}}{{{has_outgoing}}}\n"
                  f"\\newcommand{{\\wpOutgoingLiaisons}}{{\n{rows}}}\n")
 
 
 def _gen_work_programme(group, wp_number, question_numbers, work_items,
-                        work_item_details, new_work_items, deleted_work_items,
-                        c_rows, wp_rows, editors=None):
+                        work_item_details, new_work_items,
+                        wp_rows, editors=None):
     """11-work-programme table rows (new, deleted, ongoing)."""
-    import re
     editors = editors or {}
-
-    # Build a lookup of "New work item" Output TDs by question for fallback matching
-    output_new_wi = {}
-    for r in wp_rows:
-        if r.documentType == 'New work item' or (
-                r.title and 'new work item' in r.title.lower() and 'Output' in r.title):
-            for rq in r.questions:
-                output_new_wi.setdefault(rq.value, []).append(r)
-
-    # Build justification lookup: work_item_name -> TD reference
-    justification_lookup = {}
-    for row in wp_rows:
-        title = row.title or ""
-        if re.search(r'A\.(\d+)\s+justification', title, re.IGNORECASE):
-            wi_m = re.search(r'(X\.\S+|TR\.\S+|XSTR\.\S+)', title)
-            if wi_m:
-                wi_key = wi_m.group(1).rstrip(',:').strip().lower()
-                td_ref = make_href(URL + row.number.link,
-                                   f"TD{row.number.value}{row.lastRev}/{wp_number}")
-                justification_lookup[wi_key] = td_ref
-        elif 'new work item' in title.lower() and 'Proposal' in title:
-            wi_m = re.search(r'(X\.\S+|TR\.\S+|XSTR\.\S+)', title)
-            if wi_m:
-                wi_key = wi_m.group(1).rstrip(',:').strip().lower()
-                if wi_key not in justification_lookup:
-                    td_ref = make_href(URL + row.number.link,
-                                       f"TD{row.number.value}{row.lastRev}/{wp_number}")
-                    justification_lookup[wi_key] = td_ref
 
     def _lookup_editor(name):
         """Look up editor by work item name, trying multiple fallback strategies."""
@@ -1090,14 +1008,11 @@ def _gen_work_programme(group, wp_number, question_numbers, work_items,
                 return editor
 
         # Strategy 4: extract base name and search editors dict for partial match
-        # e.g. "X.accsadlt (X.suppl.bdsa)" -> try matching "X.accsadlt" against
-        # keys or alt-names like "X.1286 (ex X.accsadlt)"
         base = stripped.split('(')[0].strip().split(',')[0].strip()
         if base and base != stripped:
             editor = editors.get(base, "")
             if editor:
                 return editor
-            # Check if base appears in any editor key's alt name
             for key in editors:
                 key_alt = extract_alt_name(key)
                 if key_alt and key_alt.lower() == base.lower():
@@ -1105,94 +1020,32 @@ def _gen_work_programme(group, wp_number, question_numbers, work_items,
 
         return ""
 
-    # New work items from contributions (deduplicated by work item name)
+    # New work items from WP TDs (look for "new work item" or "NWI" in title)
     lines = []
-    seen_work_items = set()
-    for row in c_rows:
+    for row in wp_rows:
         if is_new_work_item(row.title):
             work_item, text_title = extract_new_work_item_info(row.title, wp_rows)
-
-            # Fallback: match by question against Output TDs
             if not work_item:
-                q_val = row.questions[0].value if row.questions else ""
-                for out_td in output_new_wi.get(q_val, []):
-                    if out_td.acronym:
-                        work_item = out_td.acronym
-                        if not text_title:
-                            text_title = out_td.textTitle
-                        break
-
-            # Fallback 2: match by question against work programme items with recent timing
-            if not work_item:
-                q_val = row.questions[0].value if row.questions else ""
-                for wi in work_item_details:
-                    if wi.question == q_val and wi.status and 'under study' in wi.status.lower():
-                        # Check if work item name appears in contribution title
-                        wi_base = (wi.workItem or "").split('(')[0].strip()
-                        if wi_base and wi_base.lower() in row.title.lower():
-                            work_item = wi.workItem
-                            if not text_title:
-                                text_title = wi.title or ""
-                            break
-
-            # Deduplicate: skip if we already have this work item
-            dedup_key = work_item.strip().lower() if work_item else ""
-            if dedup_key and dedup_key in seen_work_items:
                 continue
-            if dedup_key:
-                seen_work_items.add(dedup_key)
 
-            # Look up equivalent ISO/IEC from work programme data
-            equiv = ""
-            if work_item:
-                item_lower = work_item.strip().lower()
-                for wi in work_item_details:
-                    if wi.workItem:
-                        wi_lower = wi.workItem.strip().lower()
-                        if wi_lower == item_lower or item_lower in wi_lower:
-                            equiv = wi.equivNum or ""
-                            break
-
-            # Look up A.1/A.13 justification TD
-            justification = ""
-            if work_item:
-                wi_key = work_item.strip().lower()
-                justification = justification_lookup.get(wi_key, "")
-                if not justification:
-                    alt = extract_alt_name(work_item)
-                    if alt:
-                        justification = justification_lookup.get(alt.lower(), "")
+            q_name = row.questions[0].value if row.questions else ""
+            td_link = make_href(URL + row.number.link,
+                                f"TD {row.number.value.replace(' ', '')}/{wp_number}")
 
             # Look up editor
             editor = _lookup_editor(work_item)
 
-            q_name = row.questions[0].value if row.questions else ""
-            # Base text uses TD reference if available, otherwise C reference
-            _, wi_td = find_td_by_name(wp_rows, work_item)
-            if wi_td:
-                base_text = make_href(URL + wi_td.number.link,
-                                      f"TD{wi_td.number.value}{wi_td.lastRev}")
-            else:
-                base_text = td_href(row, "C")
+            # Columns: Question | Work Item | Status | Title | Editor | Base Text | Equivalent | Approval process
             lines.append(table_row_str([
                 q_name, escape_latex(work_item), "New",
-                escape_latex(text_title), "\\textit{(manual entry)}",
-                base_text, escape_latex(equiv)
+                escape_latex(text_title), escape_latex(editor),
+                td_link, "", ""
             ]))
     rows = "".join(lines)
+    has_new = "true" if lines else "false"
     write_result(RESULTS_DIR, "11-wp-new-work-items.tex",
+                 f"\\newcommand{{\\hasWpNewWorkItems}}{{{has_new}}}\n"
                  f"\\newcommand{{\\wpNewWorkItems}}{{\n{rows}}}\n")
-
-    # Deleted work items
-    lines = []
-    for element in deleted_work_items:
-        q_name, td = find_td_by_number(wp_rows, element)
-        title = escape_latex(td.textTitle) if td else ""
-        acronym = escape_latex(td.acronym) if td else ""
-        lines.append(table_row_str([q_name, acronym, title]))
-    rows = "".join(lines) if lines else "No deleted work items.\n"
-    write_result(RESULTS_DIR, "11-wp-deleted-work-items.tex",
-                 f"\\newcommand{{\\wpDeletedWorkItems}}{{\n{rows}}}\n")
 
     # Ongoing work items — only "Under Study" items
     lines = []
@@ -1206,10 +1059,11 @@ def _gen_work_programme(group, wp_number, question_numbers, work_items,
         title = wi.title or ""
         equiv = wi.equivNum or ""
         timing = wi.timing or ""
+        aap = wi.approvalProcess or ""
         q_name = wi.question or ""
 
         # Try to find matching WP TD for the base text link
-        td_name = ""
+        td_name = "no update"
         _, td = find_td_by_name(wp_rows, name)
         if td is None:
             alt = extract_alt_name(name)
@@ -1221,13 +1075,19 @@ def _gen_work_programme(group, wp_number, question_numbers, work_items,
             if not title:
                 title = td.textTitle
 
+        # Get editor
+        editor = _lookup_editor(name)
+
+        # Columns: Question | Work Item | Status | Title | Editor | Base Text | Equivalent | Target Date | Summary updated | Approval process
         lines.append(table_row_str([
             q_name, escape_latex(name), escape_latex(status),
-            escape_latex(title), "\\textit{(manual entry)}",
-            td_name, escape_latex(equiv), escape_latex(timing), ""
+            escape_latex(title), escape_latex(editor),
+            td_name, escape_latex(equiv), escape_latex(timing), "", escape_latex(aap)
         ]))
     rows = "".join(lines)
+    has_ongoing = "true" if lines else "false"
     write_result(RESULTS_DIR, "11-wp-ongoing-work-items.tex",
+                 f"\\newcommand{{\\hasWpOngoingWorkItems}}{{{has_ongoing}}}\n"
                  f"\\newcommand{{\\wpOngoingWorkItems}}{{\n{rows}}}\n")
 
 
@@ -1237,7 +1097,7 @@ def _gen_candidate_work_items(group, wp_number, candidate_next, wp_rows,
     editors = editors or {}
     lines = []
     for element in candidate_next:
-        # Try to find matching WP TD
+        # Try to find matching WP TD for baseline text
         q_name_td, td = find_td_by_name(wp_rows, element)
         if td is None:
             alt = extract_alt_name(element)
@@ -1245,16 +1105,26 @@ def _gen_candidate_work_items(group, wp_number, candidate_next, wp_rows,
                 q_name_td, td = find_td_by_name(wp_rows, alt)
 
         title = ""
-        td_name = ""
+        td_name = "no update"
         status = ""
         equiv = ""
         q_name = q_name_td or ""
-        if td:
-            title = td.textTitle
-            td_name = make_href(URL + td.number.link,
-                                f"TD{td.number.value}{td.lastRev}/{wp_number}")
+        editor = ""
 
-        # Fill status/title/equiv/question from work programme data
+        # Look for baseline text TD
+        element_lower = element.lower()
+        alt = extract_alt_name(element)
+        alt_lower = alt.lower() if alt else ""
+        for row in wp_rows:
+            row_title = (row.title or "").lower()
+            if "baseline text" in row_title:
+                if element_lower in row_title or (alt_lower and alt_lower in row_title):
+                    td = row
+                    td_name = make_href(URL + row.number.link,
+                                        f"TD{row.number.value}{row.lastRev}/{wp_number}")
+                    break
+
+        # Fill status/title/equiv/question/editor from work programme data
         for wi in work_item_details:
             wi_name = wi.workItem or ""
             wi_alt = extract_alt_name(wi_name)
@@ -1266,15 +1136,19 @@ def _gen_candidate_work_items(group, wp_number, candidate_next, wp_rows,
                 equiv = wi.equivNum or ""
                 if not q_name and wi.question:
                     q_name = wi.question
+                editor = editors.get(wi_name, "")
                 break
 
+        # Columns: Question | Work Item | Status | Title | Editor | Base Text | A.5 justification | Equivalent
         lines.append(table_row_str([
             q_name, escape_latex(str(element)),
-            escape_latex(status), escape_latex(title), "\\textit{(manual entry)}",
+            escape_latex(status), escape_latex(title), escape_latex(editor),
             td_name, "", escape_latex(equiv)
         ]))
     rows = "".join(lines)
+    has_candidate = "true" if candidate_next else "false"
     write_result(RESULTS_DIR, "12-candidate-work-items.tex",
+                 f"\\newcommand{{\\hasWpCandidateWorkItems}}{{{has_candidate}}}\n"
                  f"\\newcommand{{\\wpCandidateWorkItems}}{{\n{rows}}}\n")
 
 
@@ -1432,136 +1306,102 @@ def _gen_conclusion(group, wp_number, chairs, sg_roles=None):
                  f"\\newcommand{{\\wpConclusion}}{{\n{content}}}\n")
 
 
-def _gen_annex_a(group, wp_number, wp_rows, work_item_details):
-    """annex-a content: A.1/A.13 justification subsections for new work items.
+def _gen_annex_a_docs(group, wp_number, c_rows, gen_rows, plen_rows, wp_rows):
+    """Annex A: documentation tables (contributions, GEN, PLEN, WP) for all questions."""
 
-    Finds 'Output - Proposal for new work item' TDs and explicit
-    'A.1/A.13 justification' TDs. Uses the work programme approval
-    process to determine A.1 (AAP/TAP) vs A.13 (Agreement).
-    """
-    import re
+    def _format_source(name):
+        """Format source name: strip study group prefix (escaping done by make_href)."""
+        if name and name.startswith(f"SG{group}"):
+            name = name[len(f"SG{group}"):].strip()
+            if name.startswith("-"):
+                name = name[1:].strip()
+        return name or ""
 
-    # Build approval process lookup from work programme
-    wp_process = {}
-    for wi in work_item_details:
-        name = wi.workItem or ""
-        wp_process[name] = wi.approvalProcess or ""
-        alt = extract_alt_name(name)
-        if alt:
-            wp_process[alt] = wi.approvalProcess or ""
+    def _get_q_display(row):
+        """Get question display string from row, e.g. 'Q10/17' or 'QALL/17'."""
+        if not row.questions:
+            return ""
+        q_val = row.questions[0].value  # e.g. "10/17" or "ALL/17"
+        if q_val.startswith("Q"):
+            return q_val  # Already has Q prefix
+        return f"Q{q_val}"
 
-    # First pass: collect explicit A.1/A.13 justification TDs and track their work items
-    # Only include A.1 and A.13, exclude A.25 and other justification types
-    explicit_justifications = []
-    explicit_wi_names = set()
-    for row in wp_rows:
-        title = row.title or ""
-        m = re.search(r'A\.(\d+)\s+justification', title, re.IGNORECASE)
-        if not m:
-            continue
-        # Filter: only include A.1 and A.13 justifications
-        annex_number = m.group(1)
-        if annex_number not in ('1', '13'):
-            continue
-        display = title
-        idx = title.find(' - ')
-        if idx >= 0:
-            display = title[idx + 3:]
-        td_link = make_href(URL + row.number.link,
-                            f"TD{row.number.value}{row.lastRev}/{wp_number}")
-        explicit_justifications.append((row.number.value, escape_latex(display), td_link))
-        # Track the work item name to avoid duplicates with proposals
-        wi_m = re.search(r'(X\.\S+|TR\.\S+|XSTR\.\S+)', title)
-        if wi_m:
-            explicit_wi_names.add(wi_m.group(1).rstrip(',:').strip())
-
-    # Second pass: collect "Proposal for new work item" TDs
-    entries = []
-    seen_names = set()
-
-    for row in wp_rows:
-        title = row.title or ""
-
-        # Match "Output - Proposal for [a] new work item X.name ..."
-        if 'new work item' not in title.lower():
-            continue
-        if 'Proposal' not in title:
-            continue
-
-        # Extract work item name from the title
-        # Try X./TR./XSTR. pattern first (most specific)
-        m = re.search(
-            r'(?:ITU-T\s+)?[<\s]*(X\.\S+|TR\.\S+|XSTR\.\S+)',
-            title[title.lower().find('new work item'):], re.IGNORECASE)
-        if not m:
-            # Fallback: "Supplement to X.xxx"
-            m = re.search(r'(Supplement\s+\S+)', title, re.IGNORECASE)
-        if not m:
-            continue
-
-        wi_name = m.group(1).rstrip(',:>').strip()
-        # Fix names with trailing hyphen/dot from space in original (e.g. "XSTR.QKDN- ZTA")
-        if wi_name.endswith('-') or wi_name.endswith('.'):
-            full_title_idx = title.find(wi_name)
-            if full_title_idx >= 0:
-                rest_text = title[full_title_idx + len(wi_name):].strip()
-                next_word = rest_text.split()[0] if rest_text else ""
-                if next_word and not next_word.startswith('"'):
-                    wi_name = wi_name + next_word.rstrip(',:')
-
-        # Skip if explicit justification already exists for this item
-        if wi_name in explicit_wi_names:
-            continue
-        # Skip duplicates (same work item proposed in multiple TDs)
-        if wi_name in seen_names:
-            continue
-        seen_names.add(wi_name)
-
-        # Determine A.1 vs A.13 from approval process
-        process = wp_process.get(wi_name, "")
-        if not process:
-            for key, val in wp_process.items():
-                if wi_name in key or key in wi_name:
-                    process = val
-                    break
-
-        if process == "Agreement":
-            annex_num = "A.13"
-        else:
-            annex_num = "A.1"
-
-        # Extract the descriptive part — look for quoted text or text after colon/comma
-        after_name = ""
-        # Try to find quoted text in the title
-        quote_m = re.search(r'"([^"]+)"', title)
-        if quote_m:
-            after_name = f', "{quote_m.group(1)}"'
-        else:
-            # Try text after work item name + separator
-            desc_idx = title.find(wi_name)
-            if desc_idx >= 0:
-                rest = title[desc_idx + len(wi_name):].strip().lstrip(',:').strip()
-                rest = rest.strip('"').strip()
-                if rest:
-                    after_name = f', "{rest}"'
-
-        display = f"{annex_num} justification for proposed draft new ITU-T {wi_name}{after_name}"
-
-        td_link = make_href(URL + row.number.link,
-                            f"TD{row.number.value}{row.lastRev}/{wp_number}")
-        entries.append((row.number.value, escape_latex(display), td_link))
-
-    # Merge: explicit justifications first, then proposals
-    entries = explicit_justifications + entries
-
+    # Contributions
     lines = []
-    for _, display, td_link in entries:
-        lines.append(f"\\subsection*{{{display}}}")
-        lines.append(f"\\addcontentsline{{toc}}{{subsection}}{{{display}}}")
-        lines.append(f"See {td_link}\n")
-        lines.append("\\newpage\n")
+    for row in c_rows:
+        q_display = _get_q_display(row)
+        name = make_href(URL + row.number.link, f"C{row.number.value}{row.lastRev}")
+        source = make_href(URL + row.source.link, _format_source(row.source.name))
+        lines.append(table_row_str([q_display, name, source, escape_latex(row.title), q_display]))
+    rows = "".join(lines) if lines else "NONE"
+    write_result(RESULTS_DIR, "annex-a-contributions.tex",
+                 f"\\newcommand{{\\wpAnnexContributions}}{{\n{rows}}}\n")
 
-    write_result(RESULTS_DIR, "annex-a-justifications.tex", "\n".join(lines))
+    # GEN TDs
+    lines = []
+    for row in gen_rows:
+        q_display = _get_q_display(row)
+        name = make_href(URL + row.number.link, f"TD{row.number.value}{row.lastRev}/G")
+        source = make_href(URL + row.source.link, _format_source(row.source.name))
+        lines.append(table_row_str([q_display, name, source, escape_latex(row.title), q_display]))
+    rows = "".join(lines) if lines else "NONE"
+    write_result(RESULTS_DIR, "annex-a-gen.tex",
+                 f"\\newcommand{{\\wpAnnexGen}}{{\n{rows}}}\n")
+
+    # PLEN TDs
+    lines = []
+    for row in plen_rows:
+        q_display = _get_q_display(row)
+        name = make_href(URL + row.number.link, f"TD{row.number.value}{row.lastRev}/P")
+        source = make_href(URL + row.source.link, _format_source(row.source.name))
+        lines.append(table_row_str([q_display, name, source, escape_latex(row.title), q_display]))
+    rows = "".join(lines) if lines else "NONE"
+    write_result(RESULTS_DIR, "annex-a-plen.tex",
+                 f"\\newcommand{{\\wpAnnexPlen}}{{\n{rows}}}\n")
+
+    # WP TDs
+    lines = []
+    for row in wp_rows:
+        q_display = _get_q_display(row)
+        name = make_href(URL + row.number.link, f"TD{row.number.value}{row.lastRev}/{wp_number}")
+        source = make_href(URL + row.source.link, _format_source(row.source.name))
+        lines.append(table_row_str([q_display, name, source, escape_latex(row.title), q_display]))
+    rows = "".join(lines) if lines else "NONE"
+    write_result(RESULTS_DIR, "annex-a-wp.tex",
+                 f"\\newcommand{{\\wpAnnexWp}}{{\n{rows}}}\n")
+
+
+def _gen_annex_b_reflectors(group, question_numbers):
+    """Annex B: email reflector list for all questions in the WP."""
+    lines = []
+    for q in question_numbers:
+        reflector = f"q{q}sg{group}@lists.itu.int"
+        lines.append(f"\\item Q{q}/{group}: \\href{{mailto:{reflector}}}{{{reflector}}}")
+    content = "\n".join(lines) if lines else "\\item None"
+    write_result(RESULTS_DIR, "annex-b-reflectors.tex",
+                 f"\\newcommand{{\\wpReflectorList}}{{\\begin{{itemize}}\n{content}\n\\end{{itemize}}}}\n")
+
+
+def _gen_annex_c_new_work_items(wp_number, wp_rows):
+    """Annex C: list of new work items with their justifications."""
+    lines = []
+    for row in wp_rows:
+        if is_new_work_item(row.title):
+            work_item, text_title = extract_new_work_item_info(row.title, wp_rows)
+            if not work_item:
+                continue
+            td_link = make_href(URL + row.number.link,
+                                f"TD {row.number.value.replace(' ', '')}/{wp_number}")
+            display = f"{escape_latex(work_item)}"
+            if text_title:
+                display += f" -- {escape_latex(text_title)}"
+            lines.append(f"\\item {display} (see {td_link})")
+
+    if lines:
+        content = f"\\newcommand{{\\wpAnnexNewWorkItems}}{{\n" + "\n".join(lines) + "\n}}\n"
+    else:
+        content = "% No new work items\n"
+    write_result(RESULTS_DIR, "annex-c-new-work-items.tex", content)
 
 
 # ===================================================================

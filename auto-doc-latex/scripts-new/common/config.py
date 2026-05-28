@@ -63,21 +63,16 @@ def load_question_config(config_path):
 
 
 def load_wp_config(config_path):
-    """Load config for a Working Party report. Adds the 'workingParty' field."""
+    """Load config for a Working Party report. Adds the 'workingParty' and 'next_meeting' fields."""
     config = load_config(config_path)
     config['workingParty'] = _get_int(config['_raw'], 'workingParty', "workingParty")
 
-    # Resolve workProgramme CSV path relative to config file directory
-    wp_csv = config['_raw'].get('workProgramme', '')
-    if wp_csv and not os.path.isabs(wp_csv):
-        config_dir = os.path.dirname(os.path.abspath(config_path))
-        wp_csv = os.path.join(config_dir, wp_csv)
-    config['workProgramme'] = wp_csv
-
-    # Introduction fields
-    config['sessions'] = config['_raw'].get('sessions')
-    meeting_days = config['_raw'].get('meetingDays') or []
-    config['meetingDays'] = [_parse_date(d, "meetingDays entry") for d in meeting_days]
+    # Optional next_meeting date for filtering candidate work items
+    next_meeting_str = config['_raw'].get('next_meeting')
+    if next_meeting_str:
+        config['next_meeting'] = _parse_date(next_meeting_str, "next_meeting")
+    else:
+        config['next_meeting'] = None
 
     return config
 

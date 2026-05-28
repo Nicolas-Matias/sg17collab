@@ -1,10 +1,13 @@
-% 11-candidate-work-items.tex — Candidate work items for decision at next SG meeting
+% 10-candidate-work-items.tex — Candidate work items for decision at next SG meeting
+
+\input{chapters/variables/10-candidate-work-items}
 
 \section{Candidate work items for decision at the next SG\studyGroup{} meeting}\label{candidate-work-items-for-decision-at-the-next-sg-meeting}
 
-\textit{This part is for manual entry.}
-
+\ifthenelse{\equal{\hasCandidateWorkItems}{true}}{%
 The following work items are planned for decision at next SG\studyGroup{} meeting
+
+\hl{\textbf{Note to rapporteur: in the case a NWI is generated during this plenary session AND it is a candidate for decision at the next SG meeting, PLEASE ADD IT TO THE TABLE MANUALLY}}}
 
 {\fontsize{9}{11}\selectfont
 \begin{longtable}{|
@@ -26,9 +29,11 @@ The following work items are planned for decision at next SG\studyGroup{} meetin
 \begin{minipage}[c]{\linewidth}\centering \textbf{Equivalent e.g., ISO/IEC} \end{minipage} \\
 \hline
 \endhead
- &  &  &  &  &  &  \\
-\hline
+\candidateWorkItems
 \end{longtable}
 }
+
+
+}{No candidate work items for next SG\studyGroup{} meeting.}
 
 Note: The latest SG\studyGroup{} Work programme can be found at \href{https://www.itu.int/ITU-T/workprog/wp_search.aspx?sg=17}{Work programme}

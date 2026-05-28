@@ -3,24 +3,26 @@
 
 \section{Non-normative text (e.g., Supplements, Technical Reports, Technical Papers, Implementors' Guides or other documents) for agreement}\label{non-normative-text}
 
+\ifthenelse{\equal{\hasWpAgreement}{true}}{%
 The following non-normative texts are proposed for agreement:
 
-{\footnotesize
+{\fontsize{9}{11}\selectfont
 \begin{longtable}{|
-  p{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |
   p{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.42\textwidth - 2\tabcolsep \relax} |
+  p{\dimexpr 0.18\textwidth - 2\tabcolsep \relax} |
+  p{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
+  p{\dimexpr 0.40\textwidth - 2\tabcolsep \relax} |
   p{\dimexpr 0.22\textwidth - 2\tabcolsep \relax} |}
 \caption{Agreement}\label{tab:agreement} \\
 \hline
 \begin{minipage}[c]{\linewidth}\centering \textbf{Question} \end{minipage} &
 \begin{minipage}[c]{\linewidth}\centering \textbf{Work Item}\end{minipage} &
-\begin{minipage}[c]{\linewidth}\centering \textbf{Status} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Version} \end{minipage} &
 \begin{minipage}[c]{\linewidth}\centering \textbf{Title} \end{minipage} &
-\begin{minipage}[c]{\linewidth}\centering \textbf{Final Text} \end{minipage} \\
+\begin{minipage}[c]{\linewidth}\centering \textbf{Final Text (TD/y)} \end{minipage} \\
 \hline
 \endhead
 \wpAgreement
 \end{longtable}
 }
+}{None}
