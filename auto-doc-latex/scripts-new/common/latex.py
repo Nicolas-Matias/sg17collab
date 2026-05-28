@@ -84,3 +84,13 @@ def table_row_str(cells):
     Returns: 'cell1 & cell2 & ... \\\\\n\\hline\n'
     """
     return " & ".join(str(c) for c in cells) + " \\\\\n\\hline\n"
+
+
+def seqsplit_text(text):
+    """Wrap text in \\seqsplit{} to allow breaking anywhere.
+
+    Use for long identifiers like work item names (X.suppl1.cattle_auth).
+    """
+    if not text:
+        return ""
+    return f"\\seqsplit{{{escape_latex(text)}}}"

@@ -1,4 +1,4 @@
-% 10-work-programme.tex — Work programme
+% 09-work-programme.tex — Work programme
 
 \input{chapters/variables/09-wp-new}
 \input{chapters/variables/09-wp-ongoing}
@@ -12,13 +12,13 @@ The meeting agreed to start work on the following new work items
 
 {\fontsize{9}{11}\selectfont
 \begin{longtable}{|
-  p{\dimexpr 0.13\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.25\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.16\textwidth - 2\tabcolsep \relax} |}
+  P{\dimexpr 0.13\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.25\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.16\textwidth - 2\tabcolsep \relax} |}
 \caption{New work items}\label{tab:new-work-items} \\
 \hline
 \begin{minipage}[c]{\linewidth}\centering \textbf{Work Item} \end{minipage} &
@@ -30,6 +30,8 @@ The meeting agreed to start work on the following new work items
 \begin{minipage}[c]{\linewidth}\centering \textbf{Approval process} \end{minipage} \\
 \hline
 \endhead
+% Variable: \newWorkItems -> chapters/variables/09-wp-new.tex
+% Row template: Work Item & Status & Title & Editor & Base Text & Equivalent & Approval process \\ \hline
 \newWorkItems
 \end{longtable}
 }
@@ -43,13 +45,13 @@ The meeting agreed to discontinue the following work items:
 
 {\fontsize{9}{11}\selectfont
 \begin{longtable}{|
-  p{\dimexpr 0.13\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.25\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.16\textwidth - 2\tabcolsep \relax} |}
+  P{\dimexpr 0.13\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.25\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.16\textwidth - 2\tabcolsep \relax} |}
 \caption{Deleted work items}\label{tab:deleted-work-items} \\
 \hline
 \begin{minipage}[c]{\linewidth}\centering \textbf{Work Item} \end{minipage} &
@@ -61,8 +63,9 @@ The meeting agreed to discontinue the following work items:
 \begin{minipage}[c]{\linewidth}\centering \textbf{Approval process} \end{minipage} \\
 \hline
 \endhead
+% Row template: Work Item & Status & Title & Editor & Base Text & Equivalent & Approval process \\ \hline
 &  &  &  &  &  &
-\hline
+\\ \hline
 \end{longtable}
 }
 
@@ -77,15 +80,15 @@ Table -- Ongoing work items
 {\def\LTcaptype{none} % do not increment counter
 {\fontsize{9}{11}\selectfont
 \begin{longtable}{|
-  >{\raggedright\arraybackslash}p{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.20\textwidth - 2\tabcolsep \relax} |
-  >{\raggedright\arraybackslash}p{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.08\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |}
+  P{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.20\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.08\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |}
 \hline
 \begin{minipage}[c]{\linewidth}\centering \textbf{Work Item} \end{minipage} &
 \begin{minipage}[c]{\linewidth}\centering \textbf{Status} \end{minipage} &
@@ -98,6 +101,8 @@ Table -- Ongoing work items
 \begin{minipage}[c]{\linewidth}\centering \textbf{Approval process} \end{minipage} \\
 \hline
 \endhead
+% Variable: \ongoingWorkItems -> chapters/variables/09-wp-ongoing.tex
+% Row template: Work Item & Status & Title & Editor & Base Text & Equivalent & Target Date & Summary updated & Approval process \\ \hline
 \ongoingWorkItems
 \end{longtable}
 }}

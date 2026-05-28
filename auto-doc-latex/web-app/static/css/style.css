@@ -1,0 +1,136 @@
+/* ============================================
+   ITU-T Report Generator - Custom Styles
+   ============================================ */
+
+/* Color scheme - ITU Blue */
+:root {
+    --itu-blue: #003366;
+    --itu-light-blue: #0066cc;
+    --itu-bg: #f8f9fa;
+}
+
+body {
+    background-color: var(--itu-bg);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+header h1 {
+    color: var(--itu-blue);
+}
+
+/* Main Card */
+.card {
+    border: none;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+/* Form Labels */
+.form-label {
+    color: var(--itu-blue);
+    margin-bottom: 0.5rem;
+}
+
+/* Input Fields */
+.form-control:focus {
+    border-color: var(--itu-light-blue);
+    box-shadow: 0 0 0 0.25rem rgba(0, 102, 204, 0.25);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--itu-blue);
+    border-color: var(--itu-blue);
+}
+
+.btn-primary:hover {
+    background-color: var(--itu-light-blue);
+    border-color: var(--itu-light-blue);
+}
+
+.btn-outline-primary {
+    color: var(--itu-blue);
+    border-color: var(--itu-blue);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary.active,
+.btn-check:checked + .btn-outline-primary {
+    background-color: var(--itu-blue);
+    border-color: var(--itu-blue);
+}
+
+/* Generate Button */
+#generateBtn {
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Alert Boxes */
+.alert {
+    border-radius: 10px;
+}
+
+.alert-info {
+    background-color: #e3f2fd;
+    border-color: #90caf9;
+    color: #1976d2;
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    border-color: #81c784;
+    color: #388e3c;
+}
+
+.alert-danger {
+    background-color: #ffebee;
+    border-color: #ef5350;
+    color: #c62828;
+}
+
+/* Download Link */
+#downloadLink {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+}
+
+/* Form Text (Help Text) */
+.form-text {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* Footer */
+footer {
+    margin-top: 3rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .card-body {
+        padding: 1.5rem !important;
+    }
+}
+
+/* Spinner Animation */
+.spinner-border {
+    animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Hidden class utility */
+.d-none {
+    display: none !important;
+}

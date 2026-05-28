@@ -26,7 +26,7 @@ from common.utils import (
     parse_timing,
 )
 from common.latex import (
-    URL, escape_latex, make_href, td_href, write_result, table_row_str,
+    URL, escape_latex, make_href, td_href, write_result, table_row_str, seqsplit_text,
 )
 from common.models import split_title
 
@@ -673,12 +673,12 @@ def _gen_recommendation_table_rows(wp_rows, items, group, question, wp_number, h
         # Removed # and Question columns
         if has_a5:
             lines.append(table_row_str([
-                escape_latex(work_item), version, text_title,
+                seqsplit_text(work_item), version, text_title,
                 final_text, a5_text, equiv_num
             ]))
         else:
             lines.append(table_row_str([
-                escape_latex(work_item), version, text_title, final_text
+                seqsplit_text(work_item), version, text_title, final_text
             ]))
     return "".join(lines)
 
@@ -736,7 +736,7 @@ def _gen_draft_recommendations(group, question, wp_number, wp_rows,
 
         # Removed # and Question columns
         lines.append(table_row_str([
-            escape_latex(work_item), version, text_title, final_text
+            seqsplit_text(work_item), version, text_title, final_text
         ]))
     rows = "".join(lines)
     has_agreement = "true" if non_normative else "false"
@@ -827,8 +827,8 @@ def _gen_work_programme(group, question, wp_number, work_item_details,
             td_link = make_href(URL + row.number.link, f"TD {row.number.value.replace(' ', '')}/{wp_number}")
             # Columns: Work Item | Status | Title | Editor | Base Text | Equivalent | Approval process
             lines.append(table_row_str([
-                escape_latex(work_item), "New",
-                escape_latex(text_title), "", td_link, "", ""
+                seqsplit_text(work_item), "New",
+                escape_latex(text_title), "(manual entry)", td_link, "", ""
             ]))
     rows = "".join(lines)
     has_new_work_items = "true" if lines else "false"
@@ -862,13 +862,10 @@ def _gen_work_programme(group, question, wp_number, work_item_details,
             if not title:
                 title = td.textTitle
 
-        # Get editor from editors dict
-        editor = escape_latex(editors.get(name, ""))
-
         # New columns (removed # and Question): Work Item | Status | Title | Editor | Base Text | Equivalent | Target Date | Summary updated | AAP
         lines.append(table_row_str([
-            escape_latex(name), escape_latex(status),
-            escape_latex(title), editor, td_name, escape_latex(equiv),
+            seqsplit_text(name), escape_latex(status),
+            escape_latex(title), "(manual entry)", td_name, escape_latex(equiv),
             escape_latex(timing), "", escape_latex(aap)
         ]))
     rows = "".join(lines)
@@ -929,13 +926,10 @@ def _gen_candidate_work_items(group, wp_number, candidate_next, wp_rows,
             if not title:
                 title = td.textTitle
 
-        # Get editor from editors dict
-        editor = escape_latex(editors.get(element, ""))
-
         # Columns: Work Item | Status | Title | Editor | Base Text | A.5 justification | Equivalent
         lines.append(table_row_str([
-            escape_latex(name), escape_latex(status),
-            escape_latex(title), editor, td_name, "", escape_latex(equiv)
+            seqsplit_text(name), escape_latex(status),
+            escape_latex(title), "(manual entry)", td_name, "", escape_latex(equiv)
         ]))
 
     rows = "".join(lines)
@@ -970,7 +964,7 @@ def _gen_annex_c(wp_number, wp_rows):
             lines.append(f"  \\item {escape_latex(work_item)}: {escape_latex(text_title)} ({td_link})")
 
     if lines:
-        content = f"\\newcommand{{\\annexNewWorkItems}}{{\n" + "\n".join(lines) + "\n}}\n"
+        content = f"\\newcommand{{\\annexNewWorkItems}}{{\n" + "\n".join(lines) + "\n}\n"
     else:
         content = "% No new work items\n"
     write_result(RESULTS_DIR, "annex-c-new-work-items.tex", content)

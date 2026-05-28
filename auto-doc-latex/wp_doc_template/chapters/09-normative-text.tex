@@ -1,5 +1,5 @@
 % 09-normative-text.tex — Non-normative text for agreement (WP report)
-\input{chapters/results/09-agreement}
+\input{chapters/variables/09-agreement}
 
 \section{Non-normative text (e.g., Supplements, Technical Reports, Technical Papers, Implementors' Guides or other documents) for agreement}\label{non-normative-text}
 
@@ -8,11 +8,11 @@ The following non-normative texts are proposed for agreement:
 
 {\fontsize{9}{11}\selectfont
 \begin{longtable}{|
-  p{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.18\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.40\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.22\textwidth - 2\tabcolsep \relax} |}
+  P{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.18\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.40\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.22\textwidth - 2\tabcolsep \relax} |}
 \caption{Agreement}\label{tab:agreement} \\
 \hline
 \begin{minipage}[c]{\linewidth}\centering \textbf{Question} \end{minipage} &
@@ -22,6 +22,8 @@ The following non-normative texts are proposed for agreement:
 \begin{minipage}[c]{\linewidth}\centering \textbf{Final Text (TD/y)} \end{minipage} \\
 \hline
 \endhead
+% Variable: \wpAgreement -> chapters/variables/09-agreement.tex
+% Row template: Question & Work Item & Version & Title & Final Text \\ \hline
 \wpAgreement
 \end{longtable}
 }

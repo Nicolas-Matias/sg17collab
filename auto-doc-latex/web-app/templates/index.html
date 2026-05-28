@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITU-T SG17 Report Generator</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="text-center py-5">
+            <h1 class="display-4 fw-bold text-primary">ITU-T SG17 Report Generator</h1>
+            <p class="lead text-muted">Automated generation of Working Party and Question reports</p>
+        </header>
+
+        <!-- Main Card -->
+        <div class="card shadow-lg">
+            <div class="card-body p-4">
+                <form id="reportForm">
+
+                    <!-- Report Type Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Report Type</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="reportType" id="reportTypeWP" value="wp" checked>
+                            <label class="btn btn-outline-primary" for="reportTypeWP">Working Party Report</label>
+
+                            <input type="radio" class="btn-check" name="reportType" id="reportTypeQuestion" value="question">
+                            <label class="btn btn-outline-primary" for="reportTypeQuestion">Question Report</label>
+                        </div>
+                    </div>
+
+                    <!-- Study Group -->
+                    <div class="mb-3">
+                        <label for="group" class="form-label fw-bold">Study Group Number</label>
+                        <input type="number" class="form-control" id="group" name="group" value="17" min="1" required>
+                        <div class="form-text">ITU-T Study Group (e.g., 17 for Security)</div>
+                    </div>
+
+                    <!-- Working Party (conditional) -->
+                    <div class="mb-3" id="wpField">
+                        <label for="workingParty" class="form-label fw-bold">Working Party Number</label>
+                        <input type="number" class="form-control" id="workingParty" name="workingParty" value="1" min="1">
+                        <div class="form-text">Working Party within the Study Group</div>
+                    </div>
+
+                    <!-- Question (conditional, hidden by default) -->
+                    <div class="mb-3 d-none" id="questionField">
+                        <label for="question" class="form-label fw-bold">Question Number</label>
+                        <input type="number" class="form-control" id="question" name="question" min="1">
+                        <div class="form-text">Question within the Study Group</div>
+                    </div>
+
+                    <!-- Place -->
+                    <div class="mb-3">
+                        <label for="place" class="form-label fw-bold">Meeting Place</label>
+                        <input type="text" class="form-control" id="place" name="place" placeholder="Geneva" required>
+                        <div class="form-text">City where the meeting takes place</div>
+                    </div>
+
+                    <!-- Dates -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="start" class="form-label fw-bold">Start Date</label>
+                            <input type="date" class="form-control" id="start" name="start" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="end" class="form-label fw-bold">End Date</label>
+                            <input type="date" class="form-control" id="end" name="end" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="next_meeting" class="form-label fw-bold">Next Meeting Date</label>
+                            <input type="date" class="form-control" id="next_meeting" name="next_meeting">
+                            <div class="form-text">Optional: for candidate work items</div>
+                        </div>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg" id="generateBtn">
+                            <span id="btnText">Generate Report</span>
+                            <span id="btnSpinner" class="d-none">
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                Generating...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Progress Message -->
+                <div id="progressMsg" class="alert alert-info mt-4 d-none" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="spinner-border text-primary me-3" role="status"></div>
+                        <div>
+                            <strong>Generating report...</strong><br>
+                            <small>This may take 2-5 minutes. Please wait while we fetch data from the ITU website.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <div id="successMsg" class="alert alert-success mt-4 d-none" role="alert">
+                    <h5 class="alert-heading">Report generated successfully!</h5>
+                    <p>Your LaTeX report is ready for download.</p>
+                    <hr>
+                    <a href="#" id="downloadLink" class="btn btn-success">
+                        Download LaTeX Files (ZIP)
+                    </a>
+                    <p class="mt-3 mb-0 small text-muted">
+                        <strong>Next steps:</strong> Upload the ZIP file to <a href="https://www.overleaf.com" target="_blank">Overleaf</a> and compile to PDF.
+                    </p>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMsg" class="alert alert-danger mt-4 d-none" role="alert">
+                    <h5 class="alert-heading">Error</h5>
+                    <p id="errorText"></p>
+                </div>
+
+                <!-- JSON Preview -->
+                <div class="mt-4">
+                    <details>
+                        <summary class="text-muted" style="cursor: pointer;">Show JSON configuration preview</summary>
+                        <pre id="jsonPreview" class="bg-light p-3 mt-2 rounded border" style="font-size: 0.85rem;"></pre>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-muted py-4">
+            <small>ITU-T Study Group 17 "Security" | Automated Report Generation Tool</small>
+        </footer>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

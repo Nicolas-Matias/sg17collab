@@ -5,7 +5,7 @@ Usage:
     python generate_wp_report.py <config.json>
 
 Reads a JSON configuration file, fetches data from the ITU website,
-and generates LaTeX snippet files in ../wp_doc_template/chapters/results/.
+and generates LaTeX snippet files in ../wp_doc_template/chapters/variables/.
 These snippets are included by the .tex templates in ../wp_doc_template/chapters/.
 """
 
@@ -26,12 +26,12 @@ from common.utils import (
     detect_processed_work_items, parse_timing, print_work_programme_summary,
 )
 from common.latex import (
-    URL, escape_latex, make_href, write_result, table_row_str,
+    URL, escape_latex, make_href, write_result, table_row_str, seqsplit_text,
 )
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(SCRIPT_DIR)
-RESULTS_DIR = os.path.join(PROJECT_DIR, 'wp_doc_template', 'chapters', 'results')
+RESULTS_DIR = os.path.join(PROJECT_DIR, 'wp_doc_template', 'chapters', 'variables')
 
 
 def main():
@@ -888,13 +888,13 @@ def _gen_draft_recommendations(group, wp_number, wp_rows, approval, determinatio
             # Columns: Question | Work Item | Version | Title | Final Text | A.5 | Equivalent
             if has_a5:
                 lines.append(table_row_str([
-                    q_name, escape_latex(work_item), version,
+                    q_name, seqsplit_text(work_item), version,
                     text_title, final_text, a5_text, equiv_num
                 ]))
             else:
                 # Agreement: Question | Work Item | Version | Title | Final Text
                 lines.append(table_row_str([
-                    q_name, escape_latex(work_item), version,
+                    q_name, seqsplit_text(work_item), version,
                     text_title, final_text
                 ]))
         return "".join(lines)
@@ -1032,13 +1032,10 @@ def _gen_work_programme(group, wp_number, question_numbers, work_items,
             td_link = make_href(URL + row.number.link,
                                 f"TD {row.number.value.replace(' ', '')}/{wp_number}")
 
-            # Look up editor
-            editor = _lookup_editor(work_item)
-
             # Columns: Question | Work Item | Status | Title | Editor | Base Text | Equivalent | Approval process
             lines.append(table_row_str([
-                q_name, escape_latex(work_item), "New",
-                escape_latex(text_title), escape_latex(editor),
+                q_name, seqsplit_text(work_item), "New",
+                escape_latex(text_title), "(manual entry)",
                 td_link, "", ""
             ]))
     rows = "".join(lines)
@@ -1075,13 +1072,10 @@ def _gen_work_programme(group, wp_number, question_numbers, work_items,
             if not title:
                 title = td.textTitle
 
-        # Get editor
-        editor = _lookup_editor(name)
-
         # Columns: Question | Work Item | Status | Title | Editor | Base Text | Equivalent | Target Date | Summary updated | Approval process
         lines.append(table_row_str([
-            q_name, escape_latex(name), escape_latex(status),
-            escape_latex(title), escape_latex(editor),
+            q_name, seqsplit_text(name), escape_latex(status),
+            escape_latex(title), "(manual entry)",
             td_name, escape_latex(equiv), escape_latex(timing), "", escape_latex(aap)
         ]))
     rows = "".join(lines)
@@ -1124,7 +1118,7 @@ def _gen_candidate_work_items(group, wp_number, candidate_next, wp_rows,
                                         f"TD{row.number.value}{row.lastRev}/{wp_number}")
                     break
 
-        # Fill status/title/equiv/question/editor from work programme data
+        # Fill status/title/equiv/question from work programme data
         for wi in work_item_details:
             wi_name = wi.workItem or ""
             wi_alt = extract_alt_name(wi_name)
@@ -1136,13 +1130,12 @@ def _gen_candidate_work_items(group, wp_number, candidate_next, wp_rows,
                 equiv = wi.equivNum or ""
                 if not q_name and wi.question:
                     q_name = wi.question
-                editor = editors.get(wi_name, "")
                 break
 
         # Columns: Question | Work Item | Status | Title | Editor | Base Text | A.5 justification | Equivalent
         lines.append(table_row_str([
-            q_name, escape_latex(str(element)),
-            escape_latex(status), escape_latex(title), escape_latex(editor),
+            q_name, seqsplit_text(str(element)),
+            escape_latex(status), escape_latex(title), "(manual entry)",
             td_name, "", escape_latex(equiv)
         ]))
     rows = "".join(lines)

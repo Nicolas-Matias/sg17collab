@@ -27,6 +27,12 @@
 \usepackage{longtable,booktabs,array, tabularx}
 \usepackage{multirow}
 \usepackage{calc}
+\usepackage{ragged2e}
+\usepackage{seqsplit}  % Allows breaking text anywhere (for long identifiers)
+
+% --- Custom column type for better text wrapping ---
+% \sloppy allows aggressive word breaking, \hspace{0pt} enables hyphenation
+\newcolumntype{P}[1]{>{\RaggedRight\sloppy\hspace{0pt}\arraybackslash}p{#1}}
 
 % --- Table patches ---
 \usepackage{etoolbox}

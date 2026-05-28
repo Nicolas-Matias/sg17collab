@@ -19,12 +19,12 @@ Table 3 - TAP approval
 
 {\fontsize{9}{11}\selectfont
 \begin{longtable}{|
-  p{\dimexpr 0.17\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.30\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.18\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |}
+  P{\dimexpr 0.17\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.30\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.18\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |}
 \hline
 \begin{minipage}[c]{\linewidth}\centering \textbf{Work Item}\end{minipage} &
 \begin{minipage}[c]{\linewidth}\centering \textbf{Version} \end{minipage} &
@@ -34,6 +34,8 @@ Table 3 - TAP approval
 \begin{minipage}[c]{\linewidth}\centering \textbf{Equivalent e.g., ISO/IEC} \end{minipage} \\
 \hline
 \endhead
+% Variable: \approval -> chapters/variables/06-approval.tex
+% Row template: Work Item & Version & Title & Final Text & A.5 justification & Equivalent \\ \hline
 \approval
 \end{longtable}
 }}
@@ -50,12 +52,12 @@ Table 4 - TAP determination
 {\def\LTcaptype{none} % do not increment counter
 {\fontsize{9}{11}\selectfont
 \begin{longtable}{|
-  p{\dimexpr 0.17\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.30\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.18\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |}
+  P{\dimexpr 0.17\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.30\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.18\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |}
 \hline
 \begin{minipage}[c]{\linewidth}\centering \textbf{Work Item}\end{minipage} &
 \begin{minipage}[c]{\linewidth}\centering \textbf{Version} \end{minipage} &
@@ -65,10 +67,13 @@ Table 4 - TAP determination
 \begin{minipage}[c]{\linewidth}\centering \textbf{Equivalent e.g., ISO/IEC} \end{minipage} \\
 \hline
 \endhead
+% Variable: \determination -> chapters/variables/06-determination.tex
+% Row template: Work Item & Version & Title & Final Text & A.5 justification & Equivalent \\ \hline
 \determination
 \end{longtable}
 }}
 }{None}
+
 \subsection{Recommendations for AAP consent (Rec. ITU-T A.8)}\label{recommendations-for-aap-consent}
 
 \ifthenelse{\equal{\hasConsent}{true}}{%
@@ -80,12 +85,12 @@ Table 5 - AAP consent
 {\def\LTcaptype{none} % do not increment counter
 {\fontsize{9}{11}\selectfont
 \begin{longtable}{|
-  p{\dimexpr 0.17\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.30\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.18\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
-  p{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |}
+  P{\dimexpr 0.17\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.30\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.18\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |}
 \hline
 \begin{minipage}[c]{\linewidth}\centering \textbf{Work Item}\end{minipage} &
 \begin{minipage}[c]{\linewidth}\centering \textbf{Version} \end{minipage} &
@@ -95,6 +100,8 @@ Table 5 - AAP consent
 \begin{minipage}[c]{\linewidth}\centering \textbf{Equivalent e.g., ISO/IEC} \end{minipage} \\
 \hline
 \endhead
+% Variable: \consent -> chapters/variables/06-consent.tex
+% Row template: Work Item & Version & Title & Final Text & A.5 justification & Equivalent \\ \hline
 \consent
 \end{longtable}
 }}
