@@ -17,7 +17,7 @@ from .report_generator import (
 from .validators import (
     validate_wp_config,
     validate_question_config,
-    validate_dates,
+    validate_start_date,
     sanitize_string
 )
 
@@ -30,6 +30,6 @@ __all__ = [
     'generate_question_report',
     'validate_wp_config',
     'validate_question_config',
-    'validate_dates',
+    'validate_start_date',
     'sanitize_string'
 ]

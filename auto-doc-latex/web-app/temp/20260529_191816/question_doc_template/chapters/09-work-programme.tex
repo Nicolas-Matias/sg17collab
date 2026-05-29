@@ -1,0 +1,111 @@
+% 09-work-programme.tex — Work programme
+
+\input{chapters/variables/09-wp-new}
+\input{chapters/variables/09-wp-ongoing}
+
+\section{Work programme}\label{work-programme}
+
+\subsection{New work items}\label{new-work-items}
+
+\ifthenelse{\equal{\hasNewWorkItems}{true}}{%
+The meeting agreed to start work on the following new work items
+
+{\fontsize{9}{11}\selectfont
+\begin{longtable}{|
+  P{\dimexpr 0.13\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.25\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.16\textwidth - 2\tabcolsep \relax} |}
+\caption{New work items}\label{tab:new-work-items} \\
+\hline
+\begin{minipage}[c]{\linewidth}\centering \textbf{Work Item} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Status} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Title} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Editor} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Base Text} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Equivalent e.g. ISO/IEC} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Approval process} \end{minipage} \\
+\hline
+\endhead
+% Variable: \newWorkItems -> chapters/variables/09-wp-new.tex
+% Row template: Work Item & Status & Title & Editor & Base Text & Equivalent & Approval process \\ \hline
+\newWorkItems
+\end{longtable}
+}
+}{None}
+
+\subsection{Deleted work items}\label{deleted-work-items}
+
+\textit{This part is for manual entry.}
+
+The meeting agreed to discontinue the following work items:
+
+{\fontsize{9}{11}\selectfont
+\begin{longtable}{|
+  P{\dimexpr 0.13\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.25\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.14\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.16\textwidth - 2\tabcolsep \relax} |}
+\caption{Deleted work items}\label{tab:deleted-work-items} \\
+\hline
+\begin{minipage}[c]{\linewidth}\centering \textbf{Work Item} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Status} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Title} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Editor} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Base Text} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Equivalent e.g. ISO/IEC} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Approval process} \end{minipage} \\
+\hline
+\endhead
+% Row template: Work Item & Status & Title & Editor & Base Text & Equivalent & Approval process \\ \hline
+&  &  &  &  &  &
+\\ \hline
+\end{longtable}
+}
+
+\subsection{Updated Question work programme}\label{updated-question-work-programme}
+
+\ifthenelse{\equal{\hasOngoingWorkItems}{true}}{%
+The current list of ongoing work items, including eventual new work items agreed at this meeting (see item above) as follows:
+
+\begin{center}
+Table -- Ongoing work items
+\end{center}
+{\def\LTcaptype{none} % do not increment counter
+{\fontsize{9}{11}\selectfont
+\begin{longtable}{|
+  P{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.20\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.10\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.11\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.08\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.09\textwidth - 2\tabcolsep \relax} |}
+\hline
+\begin{minipage}[c]{\linewidth}\centering \textbf{Work Item} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Status} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Title} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Editor} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Base Text} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Equivalent e.g., ISO/IEC} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Target Date} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Summary updated (Yes/No)} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Approval process} \end{minipage} \\
+\hline
+\endhead
+% Variable: \ongoingWorkItems -> chapters/variables/09-wp-ongoing.tex
+% Row template: Work Item & Status & Title & Editor & Base Text & Equivalent & Target Date & Summary updated & Approval process \\ \hline
+\ongoingWorkItems
+\end{longtable}
+}}
+}{None}
+
+Note: The latest SG\studyGroup{} Work programme can be found at \href{https://www.itu.int/ITU-T/workprog/wp_search.aspx?sg=17}{Work programme}

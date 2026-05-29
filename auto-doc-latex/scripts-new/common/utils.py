@@ -11,15 +11,47 @@ def comma_separated_list(elements):
     return ", ".join(str(e) for e in elements)
 
 
+def _normalize_work_item_name(name):
+    """Normalize work item name for flexible matching.
+
+    Handles variations like:
+    - X.1254rev vs X.1254.rev (missing dot before suffix)
+    - XSTR.kdc-qkdn vs XSTR.kdc_QKDN (hyphen vs underscore, case)
+    """
+    if not name:
+        return ""
+    n = name.lower()
+    # Normalize hyphens and underscores
+    n = n.replace('-', '_')
+    # Remove dots before common suffixes to normalize (X.1254.rev -> X.1254rev)
+    n = re.sub(r'\.(rev|amd|cor|sup)($|[^a-z])', r'\1\2', n)
+    return n
+
+
 def find_td_by_name(table_rows, name):
     """Find a TableRow whose title contains the given name.
 
+    Uses normalized matching to handle variations like:
+    - Hyphen vs underscore (XSTR.kdc-qkdn vs XSTR.kdc_QKDN)
+    - Missing dots (X.1254rev vs X.1254.rev)
+    - Case differences
+
     Returns (questionName, tableRow) or ("", None).
     """
+    # First try exact match
     for row in table_rows:
         if name in row.title:
             question_name = row.questions[0].value if row.questions else ""
             return (question_name, row)
+
+    # Try normalized match
+    norm_name = _normalize_work_item_name(name)
+    for row in table_rows:
+        norm_title = _normalize_work_item_name(row.title)
+        if norm_name in norm_title:
+            question_name = row.questions[0].value if row.questions else ""
+            return (question_name, row)
+
     return ("", None)
 
 

@@ -2,10 +2,11 @@
    ITU-T Report Generator - Custom Styles
    ============================================ */
 
-/* Color scheme - ITU Blue */
+/* Color scheme - ITU Brand Colors */
 :root {
-    --itu-blue: #003366;
-    --itu-light-blue: #0066cc;
+    --itu-primary: #049BD6;      /* Main ITU blue */
+    --itu-light: #91CDF2;        /* Light blue */
+    --itu-dark: #052D53;         /* Dark blue */
     --itu-bg: #f8f9fa;
 }
 
@@ -16,7 +17,7 @@ body {
 
 /* Header */
 header h1 {
-    color: var(--itu-blue);
+    color: var(--itu-dark);
 }
 
 /* Main Card */
@@ -28,37 +29,39 @@ header h1 {
 
 /* Form Labels */
 .form-label {
-    color: var(--itu-blue);
+    color: var(--itu-dark);
     margin-bottom: 0.5rem;
 }
 
 /* Input Fields */
-.form-control:focus {
-    border-color: var(--itu-light-blue);
-    box-shadow: 0 0 0 0.25rem rgba(0, 102, 204, 0.25);
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--itu-primary);
+    box-shadow: 0 0 0 0.25rem rgba(4, 155, 214, 0.25);
 }
 
 /* Buttons */
 .btn-primary {
-    background-color: var(--itu-blue);
-    border-color: var(--itu-blue);
+    background-color: var(--itu-primary);
+    border-color: var(--itu-primary);
 }
 
 .btn-primary:hover {
-    background-color: var(--itu-light-blue);
-    border-color: var(--itu-light-blue);
+    background-color: var(--itu-dark);
+    border-color: var(--itu-dark);
 }
 
 .btn-outline-primary {
-    color: var(--itu-blue);
-    border-color: var(--itu-blue);
+    color: var(--itu-primary);
+    border-color: var(--itu-primary);
 }
 
 .btn-outline-primary:hover,
 .btn-outline-primary.active,
 .btn-check:checked + .btn-outline-primary {
-    background-color: var(--itu-blue);
-    border-color: var(--itu-blue);
+    background-color: var(--itu-primary);
+    border-color: var(--itu-primary);
+    color: white;
 }
 
 /* Generate Button */
@@ -74,9 +77,9 @@ header h1 {
 }
 
 .alert-info {
-    background-color: #e3f2fd;
-    border-color: #90caf9;
-    color: #1976d2;
+    background-color: rgba(145, 205, 242, 0.3);
+    border-color: var(--itu-light);
+    color: var(--itu-dark);
 }
 
 .alert-success {
@@ -106,6 +109,27 @@ header h1 {
 /* Footer */
 footer {
     margin-top: 3rem;
+    color: var(--itu-dark);
+}
+
+/* Card header accent */
+.card {
+    border-top: 4px solid var(--itu-primary);
+}
+
+/* Links */
+a {
+    color: var(--itu-primary);
+}
+
+a:hover {
+    color: var(--itu-dark);
+}
+
+/* Quick Guide */
+.bg-light {
+    background-color: rgba(145, 205, 242, 0.15) !important;
+    border-color: var(--itu-light) !important;
 }
 
 /* Responsive Adjustments */

@@ -58,10 +58,17 @@ def get_documents(document_type=None, group=None, working_party=None,
     Returns:
         List of TableRow objects.
     """
-    year = int(start[2:4])
+    # Normalize start date: accept both YYYYMMDD (8 chars) and YYMMDD (6 chars)
+    if len(start) == 8:
+        # YYYYMMDD -> extract YY and convert to YYMMDD
+        year = int(start[2:4])
+        start = start[2:]  # Strip first 2 digits (century)
+    else:
+        # YYMMDD format
+        year = int(start[0:2])
     period = str(int(year / 4) * 4 + 1)
     url_base = (f"https://www.itu.int/md/meetingdoc.asp?lang=en"
-                f"&parent=T{period}-SG{group}-{start[2:]}-")
+                f"&parent=T{period}-SG{group}-{start}-")
 
     type_map = {'C': 'C', 'GEN': 'TD-GEN', 'PLEN': 'TD-PLEN',
                 'WP': f'TD-WP{working_party}'}
@@ -473,15 +480,26 @@ def get_work_programme(group=None, question=None, working_party=None, start=None
         List of WorkItem objects, or empty list on error.
     """
     year = int(start[:4])
+    # Calculate study period range (e.g., 2026 -> "2025-2028")
+    # Study periods: 2001-2004, 2005-2008, ..., 2017-2020, 2022-2024, 2025-2028
+    if year >= 2025:
+        period_start = 2025 + ((year - 2025) // 4) * 4
+    elif year >= 2022:
+        period_start = 2022  # Special case: 2022-2024 (3-year period)
+    elif year >= 2017:
+        period_start = 2017
+    else:
+        period_start = 2001 + ((year - 2001) // 4) * 4
+    study_period_prefix = f"{period_start}-"
 
     # Step 1: Discover Study Period and Study Group ISNs
     html = _fetch_url(_WP_SEARCH_URL, encoding='utf-8')
     soup = BeautifulSoup(html, 'html.parser')
 
-    isn_sp = _find_dropdown_isn(soup, 'study_period', str(year))
+    isn_sp = _find_dropdown_isn(soup, 'study_period', study_period_prefix)
     isn_sg = _find_dropdown_isn(soup, 'study_group', f'SG{group}:')
     if isn_sp is None or isn_sg is None:
-        print(f"Could not find ISN for study period {year} or SG{group}")
+        print(f"Could not find ISN for study period {study_period_prefix}* or SG{group}")
         return []
 
     # Step 2: Discover WP and Question ISNs
@@ -683,6 +701,73 @@ def _fetch_one_editor(wi):
                     names.append(name)
 
     return names
+
+
+# ---------------------------------------------------------------------------
+# Meeting dates from document listing page
+# ---------------------------------------------------------------------------
+
+def get_meeting_info(group, start):
+    """Fetch meeting dates and place from the ITU meeting document page.
+
+    Scrapes the meeting page header for:
+    - "Meeting from YYYY-MM-DD to YYYY-MM-DD"
+    - "held in Country [City]"
+
+    Args:
+        group: Study group number (e.g. 17)
+        start: Start date string (YYYYMMDD format)
+
+    Returns:
+        dict with 'start', 'end' (datetime), 'place', 'country', or None if not found.
+    """
+    import re
+    from datetime import datetime
+
+    year = int(start[2:4])
+    period = str(int(year / 4) * 4 + 1)
+    url = f"https://www.itu.int/md/T{period}-SG{group}-{start[2:]}-TD/en"
+
+    try:
+        html = _fetch_url(url, encoding='iso8859-2')
+    except Exception as e:
+        print(f"  Warning: could not fetch meeting page: {e}")
+        return None
+
+    result = {}
+
+    # Look for "Meeting from YYYY-MM-DD to YYYY-MM-DD"
+    date_pattern = re.compile(
+        r'Meeting\s+from\s+(\d{4}-\d{2}-\d{2})\s+to\s+(\d{4}-\d{2}-\d{2})',
+        re.IGNORECASE
+    )
+    date_match = date_pattern.search(html)
+    if date_match:
+        try:
+            result['start'] = datetime.strptime(date_match.group(1), "%Y-%m-%d")
+            result['end'] = datetime.strptime(date_match.group(2), "%Y-%m-%d")
+        except ValueError as e:
+            print(f"  Warning: could not parse meeting dates: {e}")
+            return None
+    else:
+        print(f"  Warning: could not find meeting dates on page")
+        return None
+
+    # Look for "held in Country [City]"
+    place_pattern = re.compile(
+        r'held\s+in\s+([A-Za-z\s]+)\s*\[([A-Za-z\s]+)\]',
+        re.IGNORECASE
+    )
+    place_match = place_pattern.search(html)
+    if place_match:
+        result['country'] = place_match.group(1).strip()
+        result['place'] = place_match.group(2).strip()
+    else:
+        print(f"  Warning: could not find meeting place on page")
+        result['country'] = ''
+        result['place'] = ''
+
+    return result
 
 
 # ---------------------------------------------------------------------------

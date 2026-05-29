@@ -15,6 +15,7 @@
     <div class="container">
         <!-- Header -->
         <header class="text-center py-5">
+            <img src="{{ url_for('static', filename='img/itu-logo.svg') }}" alt="ITU Logo" height="80" class="mb-3">
             <h1 class="display-4 fw-bold text-primary">ITU-T SG17 Report Generator</h1>
             <p class="lead text-muted">Automated generation of Working Party and Question reports</p>
         </header>
@@ -39,42 +40,48 @@
                     <!-- Study Group -->
                     <div class="mb-3">
                         <label for="group" class="form-label fw-bold">Study Group Number</label>
-                        <input type="number" class="form-control" id="group" name="group" value="17" min="1" required>
+                        <input type="text" class="form-control" id="group" name="group" value="17" pattern="[0-9]+" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                         <div class="form-text">ITU-T Study Group (e.g., 17 for Security)</div>
                     </div>
 
                     <!-- Working Party (conditional) -->
                     <div class="mb-3" id="wpField">
                         <label for="workingParty" class="form-label fw-bold">Working Party Number</label>
-                        <input type="number" class="form-control" id="workingParty" name="workingParty" value="1" min="1">
+                        <input type="text" class="form-control" id="workingParty" name="workingParty" value="1" pattern="[0-9]+" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         <div class="form-text">Working Party within the Study Group</div>
+                    </div>
+
+                    <!-- Working Party for Question (conditional, hidden by default) -->
+                    <div class="mb-3 d-none" id="questionWpField">
+                        <label for="questionWorkingParty" class="form-label fw-bold">Working Party Number</label>
+                        <input type="text" class="form-control" id="questionWorkingParty" name="questionWorkingParty" value="1" pattern="[0-9]+" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <div class="form-text">Working Party for this Question (informational)</div>
                     </div>
 
                     <!-- Question (conditional, hidden by default) -->
                     <div class="mb-3 d-none" id="questionField">
                         <label for="question" class="form-label fw-bold">Question Number</label>
-                        <input type="number" class="form-control" id="question" name="question" min="1">
+                        <input type="text" class="form-control" id="question" name="question" pattern="[0-9]+" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         <div class="form-text">Question within the Study Group</div>
-                    </div>
-
-                    <!-- Place -->
-                    <div class="mb-3">
-                        <label for="place" class="form-label fw-bold">Meeting Place</label>
-                        <input type="text" class="form-control" id="place" name="place" placeholder="Geneva" required>
-                        <div class="form-text">City where the meeting takes place</div>
                     </div>
 
                     <!-- Dates -->
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label for="start" class="form-label fw-bold">Start Date</label>
-                            <input type="date" class="form-control" id="start" name="start" required>
+                            <select class="form-select" id="start" name="start" required>
+                                <option value="2026-06-01" selected>2026-06-01</option>
+                                <option value="2026-04-09">2026-04-09</option>
+                                <option value="2026-04-02">2026-04-02</option>
+                                <option value="2026-02-06">2026-02-06</option>
+                                <option value="2025-12-03">2025-12-03</option>
+                                <option value="2025-10-10">2025-10-10</option>
+                                <option value="2025-09-03">2025-09-03</option>
+                                <option value="2025-04-08">2025-04-08</option>
+                            </select>
+                            <div class="form-text">End date and place are auto-detected from ITU</div>
                         </div>
-                        <div class="col-md-4">
-                            <label for="end" class="form-label fw-bold">End Date</label>
-                            <input type="date" class="form-control" id="end" name="end" required>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label for="next_meeting" class="form-label fw-bold">Next Meeting Date</label>
                             <input type="date" class="form-control" id="next_meeting" name="next_meeting">
                             <div class="form-text">Optional: for candidate work items</div>
@@ -92,6 +99,18 @@
                         </button>
                     </div>
                 </form>
+
+                <!-- Quick Guide -->
+                <div class="mt-4 p-3 bg-light rounded border">
+                    <h6 class="fw-bold mb-3">How to use the generated report:</h6>
+                    <ol class="mb-0 ps-3">
+                        <li class="mb-2">Click <strong>Generate Report</strong> and wait for the download link</li>
+                        <li class="mb-2">Download the <strong>ZIP file</strong></li>
+                        <li class="mb-2">Go to <a href="https://www.overleaf.com/project" target="_blank">Overleaf</a> and click <strong>New Project</strong> > <strong>Upload Project</strong></li>
+                        <li class="mb-2">Upload the ZIP file directly (no need to unzip)</li>
+                        <li class="mb-0">Click <strong>Recompile</strong> to generate your PDF</li>
+                    </ol>
+                </div>
 
                 <!-- Progress Message -->
                 <div id="progressMsg" class="alert alert-info mt-4 d-none" role="alert">

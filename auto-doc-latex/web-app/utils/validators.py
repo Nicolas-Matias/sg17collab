@@ -25,31 +25,19 @@ def validate_date_format(date_string):
         return False, f"Invalid date format: {date_string} (expected YYYY/MM/DD)", None
 
 
-def validate_dates(start, end):
+def validate_start_date(start):
     """
-    Validate start and end dates
+    Validate start date (end date is auto-detected from ITU)
 
     Args:
-        start (str): Start date (YYYY/MM/DD)
-        end (str): End date (YYYY/MM/DD)
+        start (str): Start date (YYYY/MM/DD) - required
 
     Returns:
         tuple: (is_valid, error_message)
     """
-    # Validate start date
-    valid_start, error_start, dt_start = validate_date_format(start)
+    valid_start, error_start, _ = validate_date_format(start)
     if not valid_start:
         return False, error_start
-
-    # Validate end date
-    valid_end, error_end, dt_end = validate_date_format(end)
-    if not valid_end:
-        return False, error_end
-
-    # Check start < end
-    if dt_start >= dt_end:
-        return False, f"Start date ({start}) must be before end date ({end})"
-
     return True, None
 
 
@@ -141,14 +129,10 @@ def validate_wp_config(config):
     if not valid:
         errors.append(error)
 
-    # Validate dates
-    valid, error = validate_dates(config.get('start'), config.get('end'))
+    # Validate start date (end date and place are auto-detected from ITU)
+    valid, error = validate_start_date(config.get('start'))
     if not valid:
         errors.append(error)
-
-    # Validate place
-    if not config.get('place') or not config.get('place').strip():
-        errors.append("Place is required")
 
     return errors
 
@@ -175,14 +159,10 @@ def validate_question_config(config):
     if not valid:
         errors.append(error)
 
-    # Validate dates
-    valid, error = validate_dates(config.get('start'), config.get('end'))
+    # Validate start date (end date and place are auto-detected from ITU)
+    valid, error = validate_start_date(config.get('start'))
     if not valid:
         errors.append(error)
-
-    # Validate place
-    if not config.get('place') or not config.get('place').strip():
-        errors.append("Place is required")
 
     return errors
 

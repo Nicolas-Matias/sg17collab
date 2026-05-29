@@ -19,7 +19,7 @@ from common.config import load_wp_config
 from common.itu_api import get_documents, get_question, get_study_group, get_working_party, get_work_programme, get_work_item_editors, get_next_sg_meeting
 from common.utils import (
     comma_separated_list, find_td_by_name, find_td_by_number,
-    find_question_name_td_and_a5, compare_stripped,
+    find_question_name_td_and_a5, compare_stripped, stripped_starts_with,
     is_new_work_item, get_rapporteurs, get_associate_rapporteurs,
     get_chairs, get_vice_chairs, get_meeting_reports,
     extract_alt_name, extract_new_work_item_info, detect_outgoing_liaisons,
@@ -214,7 +214,8 @@ def main():
                                f"TD{row.number.value}{row.lastRev}")
             break
     for row in wp_rows:
-        if compare_stripped(row.title, report_title):
+        # Match "Report of WP1/17" or "Report of WP1/17 meeting" etc.
+        if stripped_starts_with(report_title, row.title):
             report_number = row.number.value.replace(' ', '')
             report = make_href(URL + row.number.link,
                                f"TD{row.number.value}{row.lastRev}")
@@ -344,8 +345,7 @@ def _generate_variables(group, wp_number, question_numbers, place, start,
         f"\\newcommand{{\\studyPeriod}}{{{first_year}-{last_year}}}",
         f"\\newcommand{{\\period}}{{{period}}}",
         f"\\newcommand{{\\leadership}}{{{leadership}}}",
-        f"\\newcommand{{\\reportNumber}}{{{report_number}}}",
-        f"\\newcommand{{\\tdNumber}}{{}}",  # TD number assigned by secretariat — fill in manually
+        f"\\newcommand{{\\reportNumber}}{{{report_number}}}"
         f"\\newcommand{{\\abstr}}{{{abstract}}}",
     ]
     write_result(RESULTS_DIR, "00-variables.tex", "\n".join(lines) + "\n")
@@ -770,8 +770,10 @@ def _gen_question_meetings(group, wp_number, question_numbers, wp_rows, c_rows,
                     q_agreement.append(val)
 
         # Work items progressed (under study items with a TD)
+        # wi.question is like "Q10/17", qn is like 10
         q_work_item_details = [wi for wi in work_item_details
-                               if wi.question and str(wi.question) == str(qn)]
+                               if wi.question and (f"Q{qn}/{group}" in str(wi.question)
+                                                   or str(wi.question) == str(qn))]
         q_processed = detect_processed_work_items(q_work_item_details, q_wp_rows)
 
         # Outgoing liaison statements from GEN TDs (LS/O in title)

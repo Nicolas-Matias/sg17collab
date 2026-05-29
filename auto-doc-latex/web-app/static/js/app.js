@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const reportTypeInputs = document.querySelectorAll('input[name="reportType"]');
     const wpField = document.getElementById('wpField');
     const questionField = document.getElementById('questionField');
+    const questionWpField = document.getElementById('questionWpField');
     const generateBtn = document.getElementById('generateBtn');
     const btnText = document.getElementById('btnText');
     const btnSpinner = document.getElementById('btnSpinner');
@@ -23,10 +24,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     reportTypeInputs.forEach(input => {
         input.addEventListener('change', function() {
+            // Hide download link and messages when switching report type
+            successMsg.classList.add('d-none');
+            errorMsg.classList.add('d-none');
+
             if (this.value === 'wp') {
                 // Show WP fields, hide Question fields
                 wpField.classList.remove('d-none');
                 questionField.classList.add('d-none');
+                questionWpField.classList.add('d-none');
 
                 // Set required attributes
                 document.getElementById('workingParty').required = true;
@@ -35,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show Question fields, hide WP fields
                 wpField.classList.add('d-none');
                 questionField.classList.remove('d-none');
+                questionWpField.classList.remove('d-none');
 
                 // Set required attributes
                 document.getElementById('workingParty').required = false;
@@ -53,9 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const config = {
             group: parseInt(formData.get('group')) || 17,
-            place: formData.get('place').trim() || 'Geneva',
-            start: convertDateToITUFormat(formData.get('start')),
-            end: convertDateToITUFormat(formData.get('end'))
+            start: convertDateToITUFormat(formData.get('start'))
+            // end date and place are auto-detected from ITU website
         };
 
         // Add next_meeting if provided
@@ -205,51 +211,5 @@ document.addEventListener('DOMContentLoaded', function() {
         errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    // ============================================
-    // Date Validation (Client-side)
-    // ============================================
-    const startInput = document.getElementById('start');
-    const endInput = document.getElementById('end');
-
-    function validateDates() {
-        // Only validate if both dates are fully entered (YYYY-MM-DD format)
-        if (!startInput.value || !endInput.value) {
-            endInput.setCustomValidity('');
-            return;
-        }
-
-        // Check if dates are valid (10 chars = YYYY-MM-DD)
-        if (startInput.value.length !== 10 || endInput.value.length !== 10) {
-            endInput.setCustomValidity('');
-            return;
-        }
-
-        const startDate = new Date(startInput.value);
-        const endDate = new Date(endInput.value);
-
-        // Check if dates are valid Date objects
-        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-            endInput.setCustomValidity('');
-            return;
-        }
-
-        if (startDate >= endDate) {
-            endInput.setCustomValidity('End date must be after start date');
-        } else {
-            endInput.setCustomValidity('');
-        }
-    }
-
-    // Validate on blur (when user leaves the field) instead of on every change
-    endInput.addEventListener('blur', validateDates);
-    startInput.addEventListener('blur', validateDates);
-
-    // Also validate on form submit
-    form.addEventListener('submit', function(e) {
-        validateDates();
-        if (!endInput.checkValidity()) {
-            e.preventDefault();
-            endInput.reportValidity();
-        }
-    }, true);
+    // End date is now auto-detected from ITU website - no client-side validation needed
 });

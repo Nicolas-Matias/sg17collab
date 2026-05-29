@@ -12,6 +12,8 @@ def load_config(config_path):
     Returns a dict with all configuration values, with defaults applied.
     Relative paths (e.g. workProgramme) are resolved relative to the
     config file's directory.
+
+    If 'end' date is not provided, it will be fetched from the ITU meeting page.
     """
     try:
         with open(config_path, "r", encoding="utf-8") as fid:
@@ -23,20 +25,30 @@ def load_config(config_path):
     # Study group
     group = _get_int(content, 'group', "group")
 
-    # Start/end dates
+    # Start date (required)
     start_string = content.get('start')
     start = _parse_date(start_string, "start date")
     start_date = f"{start.year:04}{start.month:02}{start.day:02}"
 
-    end_string = content.get('end')
-    end = _parse_date(end_string, "end date") if end_string else None
-
-    # Place
-    place = content.get('place', '')
+    # End date and place - fetched from ITU meeting page
+    from common.itu_api import get_meeting_info
+    print(f"Fetching meeting info from ITU website...")
+    meeting_info = get_meeting_info(group, start_date)
+    if meeting_info:
+        end = meeting_info['end']
+        place = meeting_info.get('place', '')
+        country = meeting_info.get('country', '')
+        print(f"  Found: {meeting_info['start'].strftime('%Y-%m-%d')} to {end.strftime('%Y-%m-%d')}, {place} ({country})")
+    else:
+        print("  Warning: Could not fetch meeting info from ITU. Using defaults.")
+        end = start
+        place = ''
+        country = ''
 
     config = {
         'group': group,
         'place': place,
+        'country': country,
         'start': start,
         'startString': start_string,
         'startDate': start_date,

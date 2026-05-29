@@ -288,8 +288,7 @@ def _generate_variables(group, question, wp_number, place, start, end,
         f"\\newcommand{{\\startDate}}{{{start_date}}}",
         f"\\newcommand{{\\studyPeriod}}{{{first_year}-{last_year}}}",
         f"\\newcommand{{\\period}}{{{period}}}",
-        f"\\newcommand{{\\reportNumber}}{{{doc_number}}}",
-        f"\\newcommand{{\\tdNumber}}{{}}",  # TD number assigned by secretariat
+        f"\\newcommand{{\\reportNumber}}{{{doc_number}}}"
         f"\\newcommand{{\\abstr}}{{This TD contains the report for Question {question}/{group} meeting.}}",
     ]
 
