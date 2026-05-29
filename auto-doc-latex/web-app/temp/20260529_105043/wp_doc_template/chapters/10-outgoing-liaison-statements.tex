@@ -1,0 +1,28 @@
+% 10-outgoing-liaison-statements.tex — Outgoing liaison statements (WP report)
+\input{chapters/variables/10-outgoing-liaisons}
+
+\section{Outgoing liaison statements}\label{outgoing-liaison-statements}
+
+\ifthenelse{\equal{\hasWpOutgoingLiaisons}{true}}{%
+The following outgoing LSs were reviewed and prepared by the WP\workingParty/\studyGroup{}
+
+{\fontsize{9}{11}\selectfont
+\begin{longtable}{|
+  P{\dimexpr 0.12\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.43\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.30\textwidth - 2\tabcolsep \relax} |
+  P{\dimexpr 0.15\textwidth - 2\tabcolsep \relax} |}
+\caption{Outgoing liaison statements}\label{tab:outgoing-ls} \\
+\hline
+\begin{minipage}[c]{\linewidth}\centering \textbf{Question} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{Title} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{For information / For action to} \end{minipage} &
+\begin{minipage}[c]{\linewidth}\centering \textbf{TD number} \end{minipage} \\
+\hline
+\endhead
+% Variable: \wpOutgoingLiaisons -> chapters/variables/10-outgoing-liaisons.tex
+% Row template: Question & Title & For info/action to & TD number \\ \hline
+\wpOutgoingLiaisons
+\end{longtable}
+}
+}{None}

@@ -199,14 +199,20 @@ def main():
     # Find agenda and report TDs
     agenda_number = ""
     agenda_url = ""
-    agenda_pattern = f"agenda of q{question}/{group}"
+    # Match patterns like "agenda of Q10/17" or "agenda of Question 10/17"
+    agenda_patterns = [
+        f"agenda of q{question}/{group}",
+        f"agenda of question {question}/{group}",
+    ]
     for row in wp_rows:
-        # Match "agenda of Q10/17"
         title_lower = row.title.lower()
-        if agenda_pattern in title_lower:
-            agenda_number = row.number.value.replace(' ', '')
-            agenda_url = URL + row.number.link
-            print(f"  Found agenda TD: {agenda_number} - {row.title}")
+        for pattern in agenda_patterns:
+            if pattern in title_lower:
+                agenda_number = row.number.value.replace(' ', '')
+                agenda_url = URL + row.number.link
+                print(f"  Found agenda TD: {agenda_number} - {row.title}")
+                break
+        if agenda_number:
             break
     if not agenda_number:
         print(f"  WARNING: No agenda TD found for Question {question}/{group}")

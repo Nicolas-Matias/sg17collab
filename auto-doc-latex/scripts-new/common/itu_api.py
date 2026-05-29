@@ -146,11 +146,11 @@ def get_documents(document_type=None, group=None, working_party=None,
                 if isinstance(questions, list):
                     selected = False
                     for q in (related_questions or []):
-                        if q.name == all_questions_name:
+                        if q.value == all_questions_name:
                             selected = True
                             break
                         for qn in question_names:
-                            if qn == q.name:
+                            if qn == q.value:
                                 selected = True
                         if selected:
                             break

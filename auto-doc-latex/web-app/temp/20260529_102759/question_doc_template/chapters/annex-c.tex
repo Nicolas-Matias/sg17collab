@@ -1,0 +1,21 @@
+% annex-c.tex — Annex C: New work items
+
+\clearpage
+\section*{Annex C}\label{annex-c}
+\addcontentsline{toc}{section}{Annex C -- New work items and their A.1/A.13 justifications}
+
+\input{chapters/variables/annex-c-new-work-items}
+
+\begin{center}
+\textbf{New work items and their A.1/A.13 justifications}
+\end{center}
+
+\ifx\annexNewWorkItems\undefined
+\textit{No new work items.}
+\else
+\begin{itemize}
+% Variable: \annexNewWorkItems -> chapters/variables/annex-c-new-work-items.tex
+% Item template: \item Work item description
+\annexNewWorkItems
+\end{itemize}
+\fi

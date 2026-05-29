@@ -387,17 +387,15 @@ def _generate_frontmatter_contacts(wp_details, wp_number):
 
 def _gen_introduction(group, wp_number, place, start, end, chairs, vice_chairs,
                       agenda, agenda_td_number, sessions, meeting_days):
-    """01-introduction content."""
-    date_range = _format_date_range(start, end)
-    chair_str = " and ".join(chairs)
-    lines = [
-        f"Working Party {wp_number}/{group} met during the SG{group} meeting held in "
-        f"{place}, {date_range}, chaired by {chair_str}"
-    ]
+    """01-introduction variables."""
+    # Chair string
+    chair_str = escape_latex(" and ".join(chairs)) if chairs else ""
+
+    # Vice-chairs / assisted by
     if vice_chairs:
-        vc_str = ", ".join(vice_chairs)
-        lines[0] += f" and assisted by {vc_str}"
-    lines[0] += "\n"
+        assisted_by = ", assisted by " + escape_latex(", ".join(vice_chairs))
+    else:
+        assisted_by = ""
 
     # Sessions count
     if sessions is not None:
@@ -438,8 +436,14 @@ def _gen_introduction(group, wp_number, place, start, end, chairs, vice_chairs,
     else:
         agenda_ref = "\\textit{agenda TD}"
 
-    lines.append(f"The group adopted the agenda in {agenda_ref}.\n")
-    write_result(RESULTS_DIR, "01-introduction-content.tex", "\n".join(lines))
+    lines = [
+        f"\\newcommand{{\\wpChairs}}{{{chair_str}}}",
+        f"\\newcommand{{\\assistedBy}}{{{assisted_by}}}",
+        f"\\newcommand{{\\sessionsCount}}{{{sessions_str}}}",
+        f"\\newcommand{{\\meetingDays}}{{{days_str}}}",
+        f"\\newcommand{{\\agendaRef}}{{{agenda_ref}}}",
+    ]
+    write_result(RESULTS_DIR, "01-introduction.tex", "\n".join(lines) + "\n")
 
 
 def _gen_executive_summary(group, wp_number, approval, determination, consent,
@@ -1391,7 +1395,7 @@ def _gen_annex_c_new_work_items(wp_number, wp_rows):
             lines.append(f"\\item {display} (see {td_link})")
 
     if lines:
-        content = f"\\newcommand{{\\wpAnnexNewWorkItems}}{{\n" + "\n".join(lines) + "\n}}\n"
+        content = f"\\newcommand{{\\wpAnnexNewWorkItems}}{{\n" + "\n".join(lines) + "\n}\n"
     else:
         content = "% No new work items\n"
     write_result(RESULTS_DIR, "annex-c-new-work-items.tex", content)
