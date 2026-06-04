@@ -16,6 +16,7 @@ from utils import (
     create_temp_directory,
     create_zip,
     cleanup_old_files,
+    cleanup_all_temp_files,
     generate_wp_report,
     generate_question_report,
     validate_wp_config,
@@ -84,8 +85,8 @@ app.config.from_object(active_config)
 # Ensure required directories exist
 ensure_directories()
 
-# Cleanup old files on startup
-cleanup_old_files(max_age_hours=1)
+# Cleanup all temp files on startup
+cleanup_all_temp_files()
 
 
 # ============================================
@@ -141,15 +142,22 @@ def api_generate_wp_report():
         # Generate the report
         template_path = generate_wp_report(config_data, temp_dir)
 
-        # Create ZIP file
+        # Create full ZIP file
         zip_path = os.path.join(temp_dir, zip_filename)
         create_zip(template_path, zip_path)
+
+        # Create variables-only ZIP file
+        variables_path = os.path.join(template_path, 'chapters', 'variables')
+        variables_zip_filename = zip_filename.replace('.zip', '-variables.zip')
+        variables_zip_path = os.path.join(temp_dir, variables_zip_filename)
+        create_zip(variables_path, variables_zip_path)
 
         # Return download ID
         return jsonify({
             'success': True,
             'download_id': download_id,
-            'filename': zip_filename
+            'filename': zip_filename,
+            'variables_filename': variables_zip_filename
         })
 
     except Exception as e:
@@ -200,15 +208,22 @@ def api_generate_question_report():
         # Generate the report
         template_path = generate_question_report(config_data, temp_dir)
 
-        # Create ZIP file
+        # Create full ZIP file
         zip_path = os.path.join(temp_dir, zip_filename)
         create_zip(template_path, zip_path)
+
+        # Create variables-only ZIP file
+        variables_path = os.path.join(template_path, 'chapters', 'variables')
+        variables_zip_filename = zip_filename.replace('.zip', '-variables.zip')
+        variables_zip_path = os.path.join(temp_dir, variables_zip_filename)
+        create_zip(variables_path, variables_zip_path)
 
         # Return download ID
         return jsonify({
             'success': True,
             'download_id': download_id,
-            'filename': zip_filename
+            'filename': zip_filename,
+            'variables_filename': variables_zip_filename
         })
 
     except Exception as e:
@@ -221,7 +236,7 @@ def api_generate_question_report():
 @app.route('/api/download/<download_id>')
 def api_download(download_id):
     """
-    Download the generated ZIP file
+    Download the generated full ZIP file
 
     Args:
         download_id: Timestamp ID (e.g., '20251226_153045')
@@ -242,13 +257,65 @@ def api_download(download_id):
                 'error': 'Download not found or expired'
             }), 404
 
-        # List all ZIP files in the directory
-        zip_files = [f for f in os.listdir(temp_dir_path) if f.endswith('.zip')]
+        # List ZIP files excluding variables-only
+        zip_files = [f for f in os.listdir(temp_dir_path)
+                     if f.endswith('.zip') and '-variables.zip' not in f]
 
         if not zip_files:
             return jsonify({
                 'success': False,
                 'error': 'ZIP file not found'
+            }), 404
+
+        # Get the first ZIP file
+        zip_path = os.path.join(temp_dir_path, zip_files[0])
+
+        # Send file for download
+        return send_file(
+            zip_path,
+            as_attachment=True,
+            download_name=zip_files[0]
+        )
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/download/<download_id>/variables')
+def api_download_variables(download_id):
+    """
+    Download only the variables folder as ZIP
+
+    Args:
+        download_id: Timestamp ID (e.g., '20251226_153045')
+
+    Returns:
+        ZIP file for download (variables only)
+    """
+    try:
+        # Find the ZIP file in temp directory
+        temp_dir_path = os.path.join(
+            os.path.dirname(__file__), 'temp', download_id
+        )
+
+        # Check if directory exists
+        if not os.path.exists(temp_dir_path):
+            return jsonify({
+                'success': False,
+                'error': 'Download not found or expired'
+            }), 404
+
+        # List variables ZIP files
+        zip_files = [f for f in os.listdir(temp_dir_path)
+                     if f.endswith('-variables.zip')]
+
+        if not zip_files:
+            return jsonify({
+                'success': False,
+                'error': 'Variables ZIP file not found'
             }), 404
 
         # Get the first ZIP file

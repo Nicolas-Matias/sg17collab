@@ -6,6 +6,7 @@ from .file_handler import (
     create_temp_directory,
     create_zip,
     cleanup_old_files,
+    cleanup_all_temp_files,
     copy_template
 )
 
@@ -25,6 +26,7 @@ __all__ = [
     'create_temp_directory',
     'create_zip',
     'cleanup_old_files',
+    'cleanup_all_temp_files',
     'copy_template',
     'generate_wp_report',
     'generate_question_report',

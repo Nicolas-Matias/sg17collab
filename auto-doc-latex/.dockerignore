@@ -1,0 +1,23 @@
+# Temp files
+web-app/temp/
+*.pyc
+__pycache__/
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Test configs
+scripts-new/*.json
+
+# Documentation
+*.md
+!README.md
+
+# LaTeX output
+*.aux
+*.log
+*.pdf
+*.synctex.gz

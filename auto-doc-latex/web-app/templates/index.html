@@ -128,11 +128,17 @@
                     <h5 class="alert-heading">Report generated successfully!</h5>
                     <p>Your LaTeX report is ready for download.</p>
                     <hr>
-                    <a href="#" id="downloadLink" class="btn btn-success">
-                        Download LaTeX Files (ZIP)
-                    </a>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="#" id="downloadLink" class="btn btn-success">
+                            Download Full Template (ZIP)
+                        </a>
+                        <a href="#" id="downloadVariablesLink" class="btn btn-success">
+                            Download Variables Only (ZIP)
+                        </a>
+                    </div>
                     <p class="mt-3 mb-0 small text-muted">
-                        <strong>Next steps:</strong> Upload the ZIP file to <a href="https://www.overleaf.com" target="_blank">Overleaf</a> and compile to PDF.
+                        <strong>Full Template:</strong> Upload to <a href="https://www.overleaf.com" target="_blank">Overleaf</a> as a new project.<br>
+                        <strong>Variables Only:</strong> Replace the <code>chapters/variables</code> folder in an existing project.
                     </p>
                 </div>
 

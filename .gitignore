@@ -1,0 +1,36 @@
+# Temp files
+auto-doc-latex/web-app/temp/
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test configs
+auto-doc-latex/scripts-new/*.json
+
+# LaTeX output
+*.aux
+*.log
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.out
+*.toc
+
+# OS files
+.DS_Store
+Thumbs.db

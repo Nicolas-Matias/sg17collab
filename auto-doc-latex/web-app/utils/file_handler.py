@@ -42,6 +42,25 @@ def create_zip(source_dir, output_zip):
     return output_zip
 
 
+def cleanup_all_temp_files():
+    """
+    Delete all temporary files in the temp directory.
+    Called on application startup.
+    """
+    if not os.path.exists(TEMP_DIR):
+        return
+
+    for item in os.listdir(TEMP_DIR):
+        item_path = os.path.join(TEMP_DIR, item)
+        try:
+            if os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+            else:
+                os.remove(item_path)
+        except (PermissionError, OSError) as e:
+            print(f"Warning: Could not delete {item_path}: {e}")
+
+
 def cleanup_old_files(max_age_hours=1):
     """
     Delete temporary files older than max_age_hours
@@ -49,6 +68,9 @@ def cleanup_old_files(max_age_hours=1):
     Args:
         max_age_hours (int): Maximum age in hours before deletion
     """
+    if not os.path.exists(TEMP_DIR):
+        return
+
     now = datetime.now()
 
     for item in os.listdir(TEMP_DIR):

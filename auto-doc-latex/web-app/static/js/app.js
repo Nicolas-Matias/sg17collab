@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const successMsg = document.getElementById('successMsg');
     const errorMsg = document.getElementById('errorMsg');
     const downloadLink = document.getElementById('downloadLink');
+    const downloadVariablesLink = document.getElementById('downloadVariablesLink');
     const errorText = document.getElementById('errorText');
     const jsonPreview = document.getElementById('jsonPreview');
 
@@ -134,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (result.success) {
                 // Success!
-                showSuccess(result.download_id, result.filename);
+                showSuccess(result.download_id, result.filename, result.variables_filename);
             } else {
                 // Error from backend
                 showError(result.error || 'Unknown error occurred');
@@ -179,16 +180,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Show success message with download link
+     * Show success message with download links
      */
-    function showSuccess(downloadId, filename) {
+    function showSuccess(downloadId, filename, variablesFilename) {
         btnText.classList.remove('d-none');
         btnSpinner.classList.add('d-none');
         progressMsg.classList.add('d-none');
 
-        // Set download link
+        // Set full download link
         downloadLink.href = `/api/download/${downloadId}`;
         downloadLink.download = filename;
+
+        // Set variables-only download link
+        downloadVariablesLink.href = `/api/download/${downloadId}/variables`;
+        downloadVariablesLink.download = variablesFilename;
 
         successMsg.classList.remove('d-none');
 
